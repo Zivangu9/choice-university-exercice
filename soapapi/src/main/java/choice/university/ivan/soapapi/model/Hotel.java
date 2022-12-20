@@ -1,8 +1,11 @@
 package choice.university.ivan.soapapi.model;
 
+import java.util.ArrayList;
 import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.ManyToMany;
@@ -16,6 +19,27 @@ public class Hotel {
     private String address;
     private double rating;
 
-    @ManyToMany
-    private List<Amenity> amenities;
+    @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    private List<Amenity> amenities = new ArrayList<>();
+
+    public Integer getId() {
+        return id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public String getAddress() {
+        return address;
+    }
+
+    public double getRating() {
+        return rating;
+    }
+
+    public List<Amenity> getAmenities() {
+        return amenities;
+    }
+
 }

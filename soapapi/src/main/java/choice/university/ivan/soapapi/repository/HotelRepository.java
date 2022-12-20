@@ -4,6 +4,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import choice.university.ivan.soapapi.model.Hotel;
 
-public interface HotelRepository extends JpaRepository<Hotel, Integer>{
-    
+public interface HotelRepository extends JpaRepository<Hotel, Integer> {
+
 }
