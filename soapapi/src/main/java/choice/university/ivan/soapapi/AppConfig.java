@@ -34,6 +34,6 @@ public class AppConfig {
 
     @Bean
     public XsdSchema hotelsSchema() {
-        return new SimpleXsdSchema(new ClassPathResource("xsd/hotels.xsd"));
+        return new SimpleXsdSchema(new ClassPathResource("schema/hotels.xsd"));
     }
 }

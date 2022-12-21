@@ -1,2 +1,11 @@
-choice\university\ivan\HotelController.class
-choice\university\ivan\Hotel.class
+choice\university\ivan\service\HotelService.class
+choice\university\ivan\schemas\ObjectFactory.class
+choice\university\ivan\schemas\GetHotelRequest.class
+choice\university\ivan\schemas\Hotel.class
+choice\university\ivan\schemas\GetHotelResponse.class
+choice\university\ivan\schemas\package-info.class
+choice\university\ivan\controller\HotelController.class
+choice\university\ivan\schemas\Amenity.class
+choice\university\ivan\model\Amenity.class
+choice\university\ivan\model\Hotel.class
+choice\university\ivan\config\AppConfig.class

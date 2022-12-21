@@ -1,6 +1,5 @@
 package choice.university.ivan.soapapi.endpoint;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
