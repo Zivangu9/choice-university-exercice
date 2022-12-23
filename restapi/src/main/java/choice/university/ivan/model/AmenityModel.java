@@ -1,13 +1,13 @@
 package choice.university.ivan.model;
 
-public class Amenity {
+public class AmenityModel {
     private int id;
     private String name;
 
-    public Amenity() {
+    public AmenityModel() {
     }
 
-    public Amenity(int id, String name) {
+    public AmenityModel(int id, String name) {
         this.id = id;
         this.name = name;
     }

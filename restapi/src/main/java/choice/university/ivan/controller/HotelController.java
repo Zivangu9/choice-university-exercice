@@ -10,8 +10,9 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import choice.university.ivan.model.Amenity;
-import choice.university.ivan.model.Hotel;
+import choice.university.ivan.mapper.HotelMapper;
+import choice.university.ivan.model.AmenityModel;
+import choice.university.ivan.model.HotelModel;
 import choice.university.ivan.schemas.GetHotelResponse;
 import choice.university.ivan.service.HotelService;
 
@@ -27,71 +28,58 @@ public class HotelController {
     HotelService hotelService;
 
     @GetMapping
-    public List<Hotel> hotels() {
-        List<Hotel> list = new ArrayList<>();
-        list.add(new Hotel(0, "Círculo Mexicano", "Mexico City Historic Centre, Mexico City"));
+    public List<HotelModel> hotels() {
+        List<HotelModel> list = new ArrayList<>();
+        list.add(new HotelModel(0, "Círculo Mexicano", "Mexico City Historic Centre, Mexico City"));
         return list;
     }
 
     @GetMapping("/{id}")
-    public Hotel getHotelByID(@PathVariable("id") int id) {
-        Hotel hotel = new Hotel();
+    public HotelModel getHotelByID(@PathVariable("id") int id) {
         GetHotelResponse getHotelResponse = hotelService.getHotelById(id);
-        choice.university.ivan.schemas.Hotel hotelResponse = getHotelResponse.getHotel();
-        hotel.setId(hotelResponse.getId());
-        hotel.setName(hotelResponse.getName());
-        hotel.setAddress(hotelResponse.getAddress());
-        hotel.setRating(hotelResponse.getRating());
-        List<Amenity> amenities = new ArrayList<>();
-        for (choice.university.ivan.schemas.Amenity amenity : hotelResponse.getAmenities()) {
-            Amenity amenityResponse = new Amenity();
-            amenityResponse.setId(amenity.getId());
-            amenityResponse.setName(amenity.getName());
-            amenities.add(amenityResponse);
-        }
-        hotel.setAmenities(amenities);
+        HotelModel hotel = HotelMapper.getHotelModel(getHotelResponse.getHotel());
         return hotel;
     }
 
     @PostMapping("")
-    public Hotel createHotel(@RequestBody Hotel hotel) {
+    public HotelModel createHotel(@RequestBody HotelModel hotel) {
         return hotel;
     }
 
     @PutMapping("/{id}")
-    public Hotel updateHotel(@PathVariable("id") int id, @RequestBody Hotel hotel) {
+    public HotelModel updateHotel(@PathVariable("id") int id, @RequestBody HotelModel hotel) {
         hotel.setId(id);
         return hotel;
     }
 
     @DeleteMapping("/{id}")
-    public Hotel deleteHotelByID(@PathVariable("id") int id) {
-        return new Hotel(id, "Hotel Deleted", "");
+    public HotelModel deleteHotelByID(@PathVariable("id") int id) {
+        return new HotelModel(id, "Hotel Deleted", "");
     }
 
     @GetMapping("/{id}/amenities")
-    public List<Amenity> getHotelAmenities(@PathVariable("id") int id) {
-        List<Amenity> list = new ArrayList<>();
-        list.add(new Amenity(1, "Wifi"));
-        list.add(new Amenity(2, "Pool"));
+    public List<AmenityModel> getHotelAmenities(@PathVariable("id") int id) {
+        List<AmenityModel> list = new ArrayList<>();
+        list.add(new AmenityModel(1, "Wifi"));
+        list.add(new AmenityModel(2, "Pool"));
         return list;
     }
 
     @PutMapping("/{hotelId}/amenities/{amenityId}")
-    public Hotel addHotelAmenity(@PathVariable("hotelId") int hotelId, @PathVariable("amenityId") int amenityId) {
-        List<Amenity> hotelAmenities = getHotelAmenities(hotelId);
-        hotelAmenities.add(new Amenity(amenityId, "Restaurant"));
-        Hotel hotel = getHotelByID(hotelId);
+    public HotelModel addHotelAmenityModel(@PathVariable("hotelId") int hotelId, @PathVariable("amenityId") int amenityId) {
+        List<AmenityModel> hotelAmenities = getHotelAmenities(hotelId);
+        hotelAmenities.add(new AmenityModel(amenityId, "Restaurant"));
+        HotelModel hotel = getHotelByID(hotelId);
         hotel.setAmenities(hotelAmenities);
         return hotel;
     }
 
     @DeleteMapping("/{hotelId}/amenities/{amenityId}")
-    public Hotel deleteHotelAmenity(@PathVariable("hotelId") int hotelId, @PathVariable("amenityId") int amenityId) {
-        List<Amenity> hotelAmenities = getHotelAmenities(hotelId);
+    public HotelModel deleteHotelAmenityModel(@PathVariable("hotelId") int hotelId, @PathVariable("amenityId") int amenityId) {
+        List<AmenityModel> hotelAmenities = getHotelAmenities(hotelId);
         hotelAmenities = hotelAmenities.stream().filter(amenity -> amenity.getId() != amenityId)
                 .collect(Collectors.toList());
-        Hotel hotel = getHotelByID(hotelId);
+        HotelModel hotel = getHotelByID(hotelId);
         hotel.setAmenities(hotelAmenities);
         return hotel;
     }

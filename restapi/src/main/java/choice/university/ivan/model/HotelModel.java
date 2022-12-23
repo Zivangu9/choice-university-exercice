@@ -2,17 +2,17 @@ package choice.university.ivan.model;
 
 import java.util.List;
 
-public class Hotel {
+public class HotelModel {
     private int id;
     private String name;
     private String address;
     private double rating;
-    private List<Amenity> amenities;
+    private List<AmenityModel> amenities;
 
-    public Hotel() {
+    public HotelModel() {
     }
 
-    public Hotel(int id, String name, String address) {
+    public HotelModel(int id, String name, String address) {
         this.id = id;
         this.name = name;
         this.address = address;
@@ -50,11 +50,11 @@ public class Hotel {
         this.rating = rating;
     }
 
-    public List<Amenity> getAmenities() {
+    public List<AmenityModel> getAmenities() {
         return amenities;
     }
 
-    public void setAmenities(List<Amenity> amenities) {
+    public void setAmenities(List<AmenityModel> amenities) {
         this.amenities = amenities;
     }
 
