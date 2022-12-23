@@ -1,6 +1,5 @@
 package choice.university.ivan.soapapi.endpoint;
 
-import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,10 +8,11 @@ import org.springframework.ws.server.endpoint.annotation.PayloadRoot;
 import org.springframework.ws.server.endpoint.annotation.RequestPayload;
 import org.springframework.ws.server.endpoint.annotation.ResponsePayload;
 
-import choice.university.ivan.schemas.Amenity;
 import choice.university.ivan.schemas.GetHotelRequest;
 import choice.university.ivan.schemas.GetHotelResponse;
-import choice.university.ivan.soapapi.model.Hotel;
+import choice.university.ivan.schemas.Hotel;
+import choice.university.ivan.soapapi.mapper.HotelMapper;
+import choice.university.ivan.soapapi.model.HotelModel;
 import choice.university.ivan.soapapi.service.HotelService;
 
 @Endpoint
@@ -25,21 +25,9 @@ public class HotelEndpoint {
     public GetHotelResponse processHotelRequest(@RequestPayload GetHotelRequest request) {
         GetHotelResponse response = new GetHotelResponse();
         response.setHotel(null);
-        Optional<Hotel> optionalHotel = hotelService.getById(request.getId());
+        Optional<HotelModel> optionalHotel = hotelService.getById(request.getId());
         if (optionalHotel.isPresent()) {
-            Hotel myHotel = optionalHotel.get();
-            choice.university.ivan.schemas.Hotel hotel = new choice.university.ivan.schemas.Hotel();
-            hotel.setId(myHotel.getId());
-            hotel.setName(myHotel.getName());
-            hotel.setAddress(myHotel.getAddress());
-            hotel.setRating(myHotel.getRating());
-            List<Amenity> amenities = hotel.getAmenities();
-            for (choice.university.ivan.soapapi.model.Amenity amenity : myHotel.getAmenities()) {
-                Amenity a = new Amenity();
-                a.setId(amenity.getId());
-                a.setName(amenity.getName());
-                amenities.add(a);
-            }
+            Hotel hotel = HotelMapper.mapHotel(optionalHotel.get());
             response.setHotel(hotel);
         }
         return response;

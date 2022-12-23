@@ -11,7 +11,7 @@ import javax.persistence.Id;
 import javax.persistence.ManyToMany;
 
 @Entity(name = "hotels")
-public class Hotel {
+public class HotelModel {
     @Id
     @GeneratedValue
     private Integer id;
@@ -20,7 +20,7 @@ public class Hotel {
     private double rating;
 
     @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-    private List<Amenity> amenities = new ArrayList<>();
+    private List<AmenityModel> amenities = new ArrayList<>();
 
     public Integer getId() {
         return id;
@@ -38,7 +38,7 @@ public class Hotel {
         return rating;
     }
 
-    public List<Amenity> getAmenities() {
+    public List<AmenityModel> getAmenities() {
         return amenities;
     }
 

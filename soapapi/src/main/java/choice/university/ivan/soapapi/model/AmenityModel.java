@@ -5,7 +5,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 
 @Entity(name = "amenities")
-public class Amenity {
+public class AmenityModel {
     @Id
     @GeneratedValue
     private Integer id;
