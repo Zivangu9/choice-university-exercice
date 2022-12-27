@@ -8,6 +8,13 @@ import choice.university.ivan.soapapi.model.AmenityModel;
 import choice.university.ivan.soapapi.model.HotelModel;
 
 public class HotelMapper {
+    public static void mapHotelsList(List<HotelModel> hotelsModel, List<Hotel> hotels) {
+        for (HotelModel hotel : hotelsModel) {
+            Hotel h = mapHotel(hotel);
+            hotels.add(h);
+        }
+    }
+
     public static Hotel mapHotel(HotelModel hotelModel) {
         Hotel hotel = new Hotel();
         hotel.setId(hotelModel.getId());

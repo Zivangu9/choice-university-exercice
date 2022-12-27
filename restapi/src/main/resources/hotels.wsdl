@@ -2,6 +2,18 @@
   <wsdl:types>
     <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified" targetNamespace="http://localhost:8081/hotels">
 
+  <xs:element name="GetAllHotelsRequest">
+  </xs:element>
+
+  <xs:element name="GetHotelsRequest">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element name="name" type="xs:string"/>
+        <xs:element name="page" type="xs:int"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+
   <xs:element name="GetHotelRequest">
     <xs:complexType>
       <xs:sequence>
@@ -14,6 +26,19 @@
     <xs:complexType>
       <xs:sequence>
         <xs:element name="Hotel" type="tns:Hotel"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name="Pagination">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element name="total" type="xs:long"/>
+        <xs:element name="page" type="xs:int"/>
+        <xs:element name="size" type="xs:int"/>
+        <xs:sequence maxOccurs="unbounded" minOccurs="0">
+          <xs:element name="items" type="tns:Hotel"/>
+        </xs:sequence>
       </xs:sequence>
     </xs:complexType>
   </xs:element>
@@ -43,6 +68,14 @@
     <wsdl:part element="tns:GetHotelResponse" name="GetHotelResponse">
     </wsdl:part>
   </wsdl:message>
+  <wsdl:message name="GetAllHotelsRequest">
+    <wsdl:part element="tns:GetAllHotelsRequest" name="GetAllHotelsRequest">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="GetHotelsRequest">
+    <wsdl:part element="tns:GetHotelsRequest" name="GetHotelsRequest">
+    </wsdl:part>
+  </wsdl:message>
   <wsdl:message name="GetHotelRequest">
     <wsdl:part element="tns:GetHotelRequest" name="GetHotelRequest">
     </wsdl:part>
@@ -53,6 +86,14 @@
     </wsdl:input>
       <wsdl:output message="tns:GetHotelResponse" name="GetHotelResponse">
     </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetAllHotels">
+      <wsdl:input message="tns:GetAllHotelsRequest" name="GetAllHotelsRequest">
+    </wsdl:input>
+    </wsdl:operation>
+    <wsdl:operation name="GetHotels">
+      <wsdl:input message="tns:GetHotelsRequest" name="GetHotelsRequest">
+    </wsdl:input>
     </wsdl:operation>
   </wsdl:portType>
   <wsdl:binding name="HotelPortSoap11" type="tns:HotelPort">
@@ -65,6 +106,18 @@
       <wsdl:output name="GetHotelResponse">
         <soap:body use="literal"/>
       </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetAllHotels">
+      <soap:operation soapAction=""/>
+      <wsdl:input name="GetAllHotelsRequest">
+        <soap:body use="literal"/>
+      </wsdl:input>
+    </wsdl:operation>
+    <wsdl:operation name="GetHotels">
+      <soap:operation soapAction=""/>
+      <wsdl:input name="GetHotelsRequest">
+        <soap:body use="literal"/>
+      </wsdl:input>
     </wsdl:operation>
   </wsdl:binding>
   <wsdl:service name="HotelPortService">

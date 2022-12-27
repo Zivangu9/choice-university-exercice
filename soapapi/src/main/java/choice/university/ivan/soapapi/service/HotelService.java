@@ -4,6 +4,8 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import choice.university.ivan.soapapi.model.HotelModel;
@@ -14,11 +16,16 @@ public class HotelService {
     @Autowired
     private HotelRepository hotelRepository;
 
+    public Optional<HotelModel> getById(int id) {
+        return hotelRepository.findById(id);
+    }
+
     public List<HotelModel> getAll() {
         return hotelRepository.findAll();
     }
 
-    public Optional<HotelModel> getById(int id) {
-        return hotelRepository.findById(id);
+    public Page<HotelModel> filterHotels(String name, int page, int size) {
+        return hotelRepository.findByNameContaining(name, PageRequest.of(page, size));
     }
+
 }

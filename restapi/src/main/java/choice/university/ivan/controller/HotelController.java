@@ -8,12 +8,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import choice.university.ivan.mapper.HotelMapper;
 import choice.university.ivan.model.AmenityModel;
 import choice.university.ivan.model.HotelModel;
 import choice.university.ivan.schemas.GetHotelResponse;
+import choice.university.ivan.schemas.Pagination;
 import choice.university.ivan.service.HotelService;
 
 import org.springframework.web.bind.annotation.PathVariable;
@@ -28,10 +30,9 @@ public class HotelController {
     HotelService hotelService;
 
     @GetMapping
-    public List<HotelModel> hotels() {
-        List<HotelModel> list = new ArrayList<>();
-        list.add(new HotelModel(0, "Círculo Mexicano", "Mexico City Historic Centre, Mexico City"));
-        return list;
+    public Pagination hotels(@RequestParam(name = "name", required = false, defaultValue = "") String name,
+            @RequestParam(name = "page", required = false, defaultValue = "0") int page) {
+        return hotelService.filterHotels(name, page);
     }
 
     @GetMapping("/{id}")
@@ -66,7 +67,8 @@ public class HotelController {
     }
 
     @PutMapping("/{hotelId}/amenities/{amenityId}")
-    public HotelModel addHotelAmenityModel(@PathVariable("hotelId") int hotelId, @PathVariable("amenityId") int amenityId) {
+    public HotelModel addHotelAmenityModel(@PathVariable("hotelId") int hotelId,
+            @PathVariable("amenityId") int amenityId) {
         List<AmenityModel> hotelAmenities = getHotelAmenities(hotelId);
         hotelAmenities.add(new AmenityModel(amenityId, "Restaurant"));
         HotelModel hotel = getHotelByID(hotelId);
@@ -75,7 +77,8 @@ public class HotelController {
     }
 
     @DeleteMapping("/{hotelId}/amenities/{amenityId}")
-    public HotelModel deleteHotelAmenityModel(@PathVariable("hotelId") int hotelId, @PathVariable("amenityId") int amenityId) {
+    public HotelModel deleteHotelAmenityModel(@PathVariable("hotelId") int hotelId,
+            @PathVariable("amenityId") int amenityId) {
         List<AmenityModel> hotelAmenities = getHotelAmenities(hotelId);
         hotelAmenities = hotelAmenities.stream().filter(amenity -> amenity.getId() != amenityId)
                 .collect(Collectors.toList());
