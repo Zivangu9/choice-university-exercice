@@ -51,7 +51,8 @@ public class HotelController {
     @PutMapping("/{id}")
     public HotelModel updateHotel(@PathVariable("id") int id, @RequestBody HotelModel hotel) {
         hotel.setId(id);
-        return hotel;
+        hotelService.updateHotel(hotel);
+        return HotelMapper.getHotelModel(hotelService.updateHotel(hotel).getHotel());
     }
 
     @DeleteMapping("/{id}")

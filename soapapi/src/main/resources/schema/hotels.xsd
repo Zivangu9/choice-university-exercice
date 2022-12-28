@@ -73,6 +73,17 @@
     </xs:complexType>
   </xs:element>
 
+  <xs:element name="UpdateHotelRequest">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element name="id" type="xs:int"/>
+        <xs:element name="name" type="xs:string"/>
+        <xs:element name="address" type="xs:string"/>
+        <xs:element name="rating" type="xs:double"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+
   <xs:element name="DeleteHotelRequest">
     <xs:complexType>
       <xs:sequence>

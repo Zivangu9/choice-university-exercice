@@ -32,6 +32,18 @@ public class HotelService {
         return hotelRepository.save(hotel);
     }
 
+    public HotelModel updateHotel(HotelModel hotel) {
+        Optional<HotelModel> hotelToUpdate = getById(hotel.getId());
+        if (hotelToUpdate.isPresent()) {
+            HotelModel hotelUpdated = hotelToUpdate.get();
+            hotelUpdated.setName(hotel.getName());
+            hotelUpdated.setAddress(hotel.getAddress());
+            hotelUpdated.setRating(hotel.getRating());
+            return hotelRepository.save(hotelUpdated);
+        }
+        return null;
+    }
+
     public HotelModel deleteHotel(int id) {
         Optional<HotelModel> hotelToDelete = getById(id);
         if (hotelToDelete.isPresent()) {

@@ -16,6 +16,7 @@ import choice.university.ivan.schemas.GetHotelResponse;
 import choice.university.ivan.schemas.GetHotelsRequest;
 import choice.university.ivan.schemas.Hotel;
 import choice.university.ivan.schemas.Pagination;
+import choice.university.ivan.schemas.UpdateHotelRequest;
 import choice.university.ivan.soapapi.mapper.HotelMapper;
 import choice.university.ivan.soapapi.model.HotelModel;
 import choice.university.ivan.soapapi.service.HotelService;
@@ -73,6 +74,20 @@ public class HotelEndpoints {
         hotel.setAddress(request.getAddress());
         hotel.setRating(request.getRating());
         HotelModel hotelCreated = hotelService.createHotel(hotel);
+        response.setHotel(HotelMapper.mapHotel(hotelCreated));
+        return response;
+    }
+
+    @PayloadRoot(localPart = "UpdateHotelRequest", namespace = NAMESPACE_URI)
+    @ResponsePayload
+    public GetHotelResponse processUpdateHotelRequest(@RequestPayload UpdateHotelRequest request) {
+        GetHotelResponse response = new GetHotelResponse();
+        HotelModel hotel = new HotelModel();
+        hotel.setId(request.getId());
+        hotel.setName(request.getName());
+        hotel.setAddress(request.getAddress());
+        hotel.setRating(request.getRating());
+        HotelModel hotelCreated = hotelService.updateHotel(hotel);
         response.setHotel(HotelMapper.mapHotel(hotelCreated));
         return response;
     }

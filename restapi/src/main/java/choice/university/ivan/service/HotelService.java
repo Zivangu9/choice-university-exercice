@@ -12,6 +12,7 @@ import choice.university.ivan.schemas.GetHotelRequest;
 import choice.university.ivan.schemas.GetHotelResponse;
 import choice.university.ivan.schemas.GetHotelsRequest;
 import choice.university.ivan.schemas.Pagination;
+import choice.university.ivan.schemas.UpdateHotelRequest;
 
 public class HotelService extends WebServiceGatewaySupport {
     public GetHotelResponse getHotelById(int id) {
@@ -44,6 +45,18 @@ public class HotelService extends WebServiceGatewaySupport {
 
     public GetHotelResponse createHotel(HotelModel hotel) {
         CreateHotelRequest request = new CreateHotelRequest();
+        request.setName(hotel.getName());
+        request.setAddress(hotel.getAddress());
+        request.setRating(hotel.getRating());
+
+        GetHotelResponse response = (GetHotelResponse) getWebServiceTemplate()
+                .marshalSendAndReceive(request);
+        return response;
+    }
+
+    public GetHotelResponse updateHotel(HotelModel hotel) {
+        UpdateHotelRequest request = new UpdateHotelRequest();
+        request.setId(hotel.getId());
         request.setName(hotel.getName());
         request.setAddress(hotel.getAddress());
         request.setRating(hotel.getRating());
