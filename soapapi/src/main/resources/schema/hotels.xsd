@@ -63,4 +63,13 @@
     </xs:sequence>
   </xs:complexType>
 
+  <xs:element name="CreateHotelRequest">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element name="name" type="xs:string"/>
+        <xs:element name="address" type="xs:string"/>
+        <xs:element name="rating" type="xs:double"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
 </xs:schema>

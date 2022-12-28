@@ -28,4 +28,7 @@ public class HotelService {
         return hotelRepository.findByNameContaining(name, PageRequest.of(page, size));
     }
 
+    public HotelModel createHotel(HotelModel hotel) {
+        return hotelRepository.save(hotel);
+    }
 }

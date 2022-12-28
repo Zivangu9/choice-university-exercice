@@ -8,5 +8,4 @@ import choice.university.ivan.soapapi.model.HotelModel;
 
 public interface HotelRepository extends JpaRepository<HotelModel, Integer> {
     Page<HotelModel> findByNameContaining(String name, Pageable pageable);
-
 }

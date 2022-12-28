@@ -15,6 +15,7 @@ import choice.university.ivan.mapper.HotelMapper;
 import choice.university.ivan.model.AmenityModel;
 import choice.university.ivan.model.HotelModel;
 import choice.university.ivan.schemas.GetHotelResponse;
+import choice.university.ivan.schemas.Hotel;
 import choice.university.ivan.schemas.Pagination;
 import choice.university.ivan.service.HotelService;
 
@@ -44,7 +45,8 @@ public class HotelController {
 
     @PostMapping("")
     public HotelModel createHotel(@RequestBody HotelModel hotel) {
-        return hotel;
+        Hotel hotelCreated = hotelService.createHotel(hotel).getHotel();
+        return HotelMapper.getHotelModel(hotelCreated);
     }
 
     @PutMapping("/{id}")

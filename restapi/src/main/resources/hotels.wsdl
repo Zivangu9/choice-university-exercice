@@ -62,6 +62,15 @@
     </xs:sequence>
   </xs:complexType>
 
+  <xs:element name="CreateHotelRequest">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element name="name" type="xs:string"/>
+        <xs:element name="address" type="xs:string"/>
+        <xs:element name="rating" type="xs:double"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
 </xs:schema>
   </wsdl:types>
   <wsdl:message name="GetHotelResponse">
@@ -80,6 +89,10 @@
     <wsdl:part element="tns:GetHotelRequest" name="GetHotelRequest">
     </wsdl:part>
   </wsdl:message>
+  <wsdl:message name="CreateHotelRequest">
+    <wsdl:part element="tns:CreateHotelRequest" name="CreateHotelRequest">
+    </wsdl:part>
+  </wsdl:message>
   <wsdl:portType name="HotelPort">
     <wsdl:operation name="GetHotel">
       <wsdl:input message="tns:GetHotelRequest" name="GetHotelRequest">
@@ -93,6 +106,10 @@
     </wsdl:operation>
     <wsdl:operation name="GetHotels">
       <wsdl:input message="tns:GetHotelsRequest" name="GetHotelsRequest">
+    </wsdl:input>
+    </wsdl:operation>
+    <wsdl:operation name="CreateHotel">
+      <wsdl:input message="tns:CreateHotelRequest" name="CreateHotelRequest">
     </wsdl:input>
     </wsdl:operation>
   </wsdl:portType>
@@ -116,6 +133,12 @@
     <wsdl:operation name="GetHotels">
       <soap:operation soapAction=""/>
       <wsdl:input name="GetHotelsRequest">
+        <soap:body use="literal"/>
+      </wsdl:input>
+    </wsdl:operation>
+    <wsdl:operation name="CreateHotel">
+      <soap:operation soapAction=""/>
+      <wsdl:input name="CreateHotelRequest">
         <soap:body use="literal"/>
       </wsdl:input>
     </wsdl:operation>
