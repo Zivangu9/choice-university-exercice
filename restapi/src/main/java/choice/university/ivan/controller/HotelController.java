@@ -62,10 +62,7 @@ public class HotelController {
 
     @GetMapping("/{id}/amenities")
     public List<AmenityModel> getHotelAmenities(@PathVariable("id") int id) {
-        List<AmenityModel> list = new ArrayList<>();
-        list.add(new AmenityModel(1, "Wifi"));
-        list.add(new AmenityModel(2, "Pool"));
-        return list;
+        return HotelMapper.getAmenities(hotelService.getAmenitiesByHotelId(id));
     }
 
     @PutMapping("/{hotelId}/amenities/{amenityId}")

@@ -1,8 +1,11 @@
 package choice.university.ivan.service;
 
+import java.util.List;
+
 import org.springframework.ws.client.core.support.WebServiceGatewaySupport;
 
 import choice.university.ivan.model.HotelModel;
+import choice.university.ivan.schemas.Amenity;
 import choice.university.ivan.schemas.CreateHotelRequest;
 import choice.university.ivan.schemas.GetHotelRequest;
 import choice.university.ivan.schemas.GetHotelResponse;
@@ -17,6 +20,15 @@ public class HotelService extends WebServiceGatewaySupport {
         GetHotelResponse response = (GetHotelResponse) getWebServiceTemplate()
                 .marshalSendAndReceive(request);
         return response;
+    }
+
+    public List<Amenity> getAmenitiesByHotelId(int id) {
+        GetHotelRequest request = new GetHotelRequest();
+        request.setId(id);
+
+        GetHotelResponse response = (GetHotelResponse) getWebServiceTemplate()
+                .marshalSendAndReceive(request);
+        return response.getHotel().getAmenities();
     }
 
     public Pagination filterHotels(String name, int page) {
