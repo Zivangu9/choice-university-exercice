@@ -1,6 +1,5 @@
 package choice.university.ivan.controller;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -57,7 +56,7 @@ public class HotelController {
 
     @DeleteMapping("/{id}")
     public HotelModel deleteHotelByID(@PathVariable("id") int id) {
-        return new HotelModel(id, "Hotel Deleted", "");
+        return HotelMapper.getHotelModel(hotelService.deleteHotel(id).getHotel());
     }
 
     @GetMapping("/{id}/amenities")

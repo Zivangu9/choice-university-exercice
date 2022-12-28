@@ -20,7 +20,7 @@ public class HotelModel {
     private String address;
     private double rating;
 
-    @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.PERSIST)
     private List<AmenityModel> amenities = new ArrayList<>();
 
     public Integer getId() {

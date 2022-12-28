@@ -10,6 +10,7 @@ import org.springframework.ws.server.endpoint.annotation.RequestPayload;
 import org.springframework.ws.server.endpoint.annotation.ResponsePayload;
 
 import choice.university.ivan.schemas.CreateHotelRequest;
+import choice.university.ivan.schemas.DeleteHotelRequest;
 import choice.university.ivan.schemas.GetHotelRequest;
 import choice.university.ivan.schemas.GetHotelResponse;
 import choice.university.ivan.schemas.GetHotelsRequest;
@@ -73,6 +74,15 @@ public class HotelEndpoints {
         hotel.setRating(request.getRating());
         HotelModel hotelCreated = hotelService.createHotel(hotel);
         response.setHotel(HotelMapper.mapHotel(hotelCreated));
+        return response;
+    }
+
+    @PayloadRoot(localPart = "DeleteHotelRequest", namespace = NAMESPACE_URI)
+    @ResponsePayload
+    public GetHotelResponse processDeleteHotelRequest(@RequestPayload DeleteHotelRequest request) {
+        HotelModel hotelDeleted = hotelService.deleteHotel(request.getId());
+        GetHotelResponse response = new GetHotelResponse();
+        response.setHotel(HotelMapper.mapHotel(hotelDeleted));
         return response;
     }
 }

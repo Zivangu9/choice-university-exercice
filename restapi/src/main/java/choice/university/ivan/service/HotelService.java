@@ -7,6 +7,7 @@ import org.springframework.ws.client.core.support.WebServiceGatewaySupport;
 import choice.university.ivan.model.HotelModel;
 import choice.university.ivan.schemas.Amenity;
 import choice.university.ivan.schemas.CreateHotelRequest;
+import choice.university.ivan.schemas.DeleteHotelRequest;
 import choice.university.ivan.schemas.GetHotelRequest;
 import choice.university.ivan.schemas.GetHotelResponse;
 import choice.university.ivan.schemas.GetHotelsRequest;
@@ -46,6 +47,15 @@ public class HotelService extends WebServiceGatewaySupport {
         request.setName(hotel.getName());
         request.setAddress(hotel.getAddress());
         request.setRating(hotel.getRating());
+
+        GetHotelResponse response = (GetHotelResponse) getWebServiceTemplate()
+                .marshalSendAndReceive(request);
+        return response;
+    }
+
+    public GetHotelResponse deleteHotel(int id) {
+        DeleteHotelRequest request = new DeleteHotelRequest();
+        request.setId(id);
 
         GetHotelResponse response = (GetHotelResponse) getWebServiceTemplate()
                 .marshalSendAndReceive(request);

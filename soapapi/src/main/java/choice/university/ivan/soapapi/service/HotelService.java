@@ -31,4 +31,13 @@ public class HotelService {
     public HotelModel createHotel(HotelModel hotel) {
         return hotelRepository.save(hotel);
     }
+
+    public HotelModel deleteHotel(int id) {
+        Optional<HotelModel> hotelToDelete = getById(id);
+        if (hotelToDelete.isPresent()) {
+            hotelRepository.deleteById(id);
+            return hotelToDelete.get();
+        }
+        return null;
+    }
 }
