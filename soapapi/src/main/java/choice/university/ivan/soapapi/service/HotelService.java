@@ -8,13 +8,18 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
+import choice.university.ivan.schemas.Amenity;
+import choice.university.ivan.soapapi.model.AmenityModel;
 import choice.university.ivan.soapapi.model.HotelModel;
+import choice.university.ivan.soapapi.repository.AmenityRepository;
 import choice.university.ivan.soapapi.repository.HotelRepository;
 
 @Service
 public class HotelService {
     @Autowired
     private HotelRepository hotelRepository;
+    @Autowired
+    private AmenityRepository amenityRepository;
 
     public Optional<HotelModel> getById(int id) {
         return hotelRepository.findById(id);
@@ -49,6 +54,25 @@ public class HotelService {
         if (hotelToDelete.isPresent()) {
             hotelRepository.deleteById(id);
             return hotelToDelete.get();
+        }
+        return null;
+    }
+
+    public HotelModel addAmenityToHotel(int idHotel, int idAmenity) {
+        Optional<HotelModel> hotelToUpdate = getById(idHotel);
+        Optional<AmenityModel> amenityToAdd = amenityRepository.findById(idAmenity);
+        if (hotelToUpdate.isPresent() && amenityToAdd.isPresent()) {
+            HotelModel hotelUpdated = hotelToUpdate.get();
+            AmenityModel amenity = amenityToAdd.get();
+            List<AmenityModel> amenities = hotelUpdated.getAmenities();
+            boolean isAmenityInList = false;
+            for (AmenityModel amenityModel : amenities)
+                if (amenityModel.getId() == idAmenity)
+                    isAmenityInList = true;
+            if (!isAmenityInList) {
+                amenities.add(amenity);
+            }
+            return hotelRepository.save(hotelUpdated);
         }
         return null;
     }

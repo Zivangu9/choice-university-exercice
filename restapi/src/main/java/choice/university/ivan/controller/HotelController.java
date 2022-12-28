@@ -66,13 +66,9 @@ public class HotelController {
     }
 
     @PutMapping("/{hotelId}/amenities/{amenityId}")
-    public HotelModel addHotelAmenityModel(@PathVariable("hotelId") int hotelId,
+    public List<AmenityModel> addHotelAmenityModel(@PathVariable("hotelId") int hotelId,
             @PathVariable("amenityId") int amenityId) {
-        List<AmenityModel> hotelAmenities = getHotelAmenities(hotelId);
-        hotelAmenities.add(new AmenityModel(amenityId, "Restaurant"));
-        HotelModel hotel = getHotelByID(hotelId);
-        hotel.setAmenities(hotelAmenities);
-        return hotel;
+        return HotelMapper.getAmenities(hotelService.addAmenityToHotelByIds(hotelId, amenityId));
     }
 
     @DeleteMapping("/{hotelId}/amenities/{amenityId}")

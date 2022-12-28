@@ -91,4 +91,13 @@
       </xs:sequence>
     </xs:complexType>
   </xs:element>
+
+  <xs:element name="AddAmenityHotelRequest">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element name="idHotel" type="xs:int"/>
+        <xs:element name="idAmenity" type="xs:int"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
 </xs:schema>
