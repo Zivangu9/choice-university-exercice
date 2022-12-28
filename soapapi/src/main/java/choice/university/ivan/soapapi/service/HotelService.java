@@ -8,7 +8,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
-import choice.university.ivan.schemas.Amenity;
 import choice.university.ivan.soapapi.model.AmenityModel;
 import choice.university.ivan.soapapi.model.HotelModel;
 import choice.university.ivan.soapapi.repository.AmenityRepository;
@@ -72,6 +71,21 @@ public class HotelService {
             if (!isAmenityInList) {
                 amenities.add(amenity);
             }
+            return hotelRepository.save(hotelUpdated);
+        }
+        return null;
+    }
+
+    public HotelModel removeAmenityFromHotel(int idHotel, int idAmenity) {
+        Optional<HotelModel> hotelToUpdate = getById(idHotel);
+        if (hotelToUpdate.isPresent()) {
+            HotelModel hotelUpdated = hotelToUpdate.get();
+            List<AmenityModel> amenities = hotelUpdated.getAmenities();
+            AmenityModel amenityToRemove = null;
+            for (AmenityModel amenityModel : amenities)
+                if (amenityModel.getId() == idAmenity)
+                    amenityToRemove = amenityModel;
+            amenities.remove(amenityToRemove);
             return hotelRepository.save(hotelUpdated);
         }
         return null;

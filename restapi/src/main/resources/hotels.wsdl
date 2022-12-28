@@ -99,6 +99,15 @@
       </xs:sequence>
     </xs:complexType>
   </xs:element>
+
+  <xs:element name="RemoveAmenityHotelRequest">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element name="idHotel" type="xs:int"/>
+        <xs:element name="idAmenity" type="xs:int"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
 </xs:schema>
   </wsdl:types>
   <wsdl:message name="DeleteHotelRequest">
@@ -127,6 +136,10 @@
   </wsdl:message>
   <wsdl:message name="CreateHotelRequest">
     <wsdl:part element="tns:CreateHotelRequest" name="CreateHotelRequest">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="RemoveAmenityHotelRequest">
+    <wsdl:part element="tns:RemoveAmenityHotelRequest" name="RemoveAmenityHotelRequest">
     </wsdl:part>
   </wsdl:message>
   <wsdl:message name="AddAmenityHotelRequest">
@@ -158,6 +171,10 @@
     </wsdl:operation>
     <wsdl:operation name="CreateHotel">
       <wsdl:input message="tns:CreateHotelRequest" name="CreateHotelRequest">
+    </wsdl:input>
+    </wsdl:operation>
+    <wsdl:operation name="RemoveAmenityHotel">
+      <wsdl:input message="tns:RemoveAmenityHotelRequest" name="RemoveAmenityHotelRequest">
     </wsdl:input>
     </wsdl:operation>
     <wsdl:operation name="AddAmenityHotel">
@@ -203,6 +220,12 @@
     <wsdl:operation name="CreateHotel">
       <soap:operation soapAction=""/>
       <wsdl:input name="CreateHotelRequest">
+        <soap:body use="literal"/>
+      </wsdl:input>
+    </wsdl:operation>
+    <wsdl:operation name="RemoveAmenityHotel">
+      <soap:operation soapAction=""/>
+      <wsdl:input name="RemoveAmenityHotelRequest">
         <soap:body use="literal"/>
       </wsdl:input>
     </wsdl:operation>

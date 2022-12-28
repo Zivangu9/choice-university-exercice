@@ -17,6 +17,7 @@ import choice.university.ivan.schemas.GetHotelResponse;
 import choice.university.ivan.schemas.GetHotelsRequest;
 import choice.university.ivan.schemas.Hotel;
 import choice.university.ivan.schemas.Pagination;
+import choice.university.ivan.schemas.RemoveAmenityHotelRequest;
 import choice.university.ivan.schemas.UpdateHotelRequest;
 import choice.university.ivan.soapapi.mapper.HotelMapper;
 import choice.university.ivan.soapapi.model.HotelModel;
@@ -104,10 +105,19 @@ public class HotelEndpoints {
 
     @PayloadRoot(localPart = "AddAmenityHotelRequest", namespace = NAMESPACE_URI)
     @ResponsePayload
-    public GetHotelResponse processUpdateHotelRequest(@RequestPayload AddAmenityHotelRequest request) {
+    public GetHotelResponse processAddAmenityToHotelRequest(@RequestPayload AddAmenityHotelRequest request) {
         GetHotelResponse response = new GetHotelResponse();
-        HotelModel hotelCreated = hotelService.addAmenityToHotel(request.getIdHotel(), request.getIdAmenity());
-        response.setHotel(HotelMapper.mapHotel(hotelCreated));
+        HotelModel hotelUpdated = hotelService.addAmenityToHotel(request.getIdHotel(), request.getIdAmenity());
+        response.setHotel(HotelMapper.mapHotel(hotelUpdated));
+        return response;
+    }
+
+    @PayloadRoot(localPart = "RemoveAmenityHotelRequest", namespace = NAMESPACE_URI)
+    @ResponsePayload
+    public GetHotelResponse processRemoveAmenityFromHotelRequest(@RequestPayload RemoveAmenityHotelRequest request) {
+        GetHotelResponse response = new GetHotelResponse();
+        HotelModel hotelUpdated = hotelService.removeAmenityFromHotel(request.getIdHotel(), request.getIdAmenity());
+        response.setHotel(HotelMapper.mapHotel(hotelUpdated));
         return response;
     }
 }

@@ -13,6 +13,7 @@ import choice.university.ivan.schemas.GetHotelRequest;
 import choice.university.ivan.schemas.GetHotelResponse;
 import choice.university.ivan.schemas.GetHotelsRequest;
 import choice.university.ivan.schemas.Pagination;
+import choice.university.ivan.schemas.RemoveAmenityHotelRequest;
 import choice.university.ivan.schemas.UpdateHotelRequest;
 
 public class HotelService extends WebServiceGatewaySupport {
@@ -78,6 +79,16 @@ public class HotelService extends WebServiceGatewaySupport {
 
     public List<Amenity> addAmenityToHotelByIds(int idHotel, int idAmenity) {
         AddAmenityHotelRequest request = new AddAmenityHotelRequest();
+        request.setIdHotel(idHotel);
+        request.setIdAmenity(idAmenity);
+
+        GetHotelResponse response = (GetHotelResponse) getWebServiceTemplate()
+                .marshalSendAndReceive(request);
+        return response.getHotel().getAmenities();
+    }
+
+    public List<Amenity> removeAmenityFromHotelByIds(int idHotel, int idAmenity) {
+        RemoveAmenityHotelRequest request = new RemoveAmenityHotelRequest();
         request.setIdHotel(idHotel);
         request.setIdAmenity(idAmenity);
 

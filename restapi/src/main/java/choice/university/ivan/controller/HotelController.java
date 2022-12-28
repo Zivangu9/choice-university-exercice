@@ -72,13 +72,8 @@ public class HotelController {
     }
 
     @DeleteMapping("/{hotelId}/amenities/{amenityId}")
-    public HotelModel deleteHotelAmenityModel(@PathVariable("hotelId") int hotelId,
+    public List<AmenityModel> deleteHotelAmenityModel(@PathVariable("hotelId") int hotelId,
             @PathVariable("amenityId") int amenityId) {
-        List<AmenityModel> hotelAmenities = getHotelAmenities(hotelId);
-        hotelAmenities = hotelAmenities.stream().filter(amenity -> amenity.getId() != amenityId)
-                .collect(Collectors.toList());
-        HotelModel hotel = getHotelByID(hotelId);
-        hotel.setAmenities(hotelAmenities);
-        return hotel;
+        return HotelMapper.getAmenities(hotelService.removeAmenityFromHotelByIds(hotelId, amenityId));
     }
 }
