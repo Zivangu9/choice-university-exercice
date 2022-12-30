@@ -23,6 +23,13 @@ public class HotelModel {
     @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.PERSIST)
     private List<AmenityModel> amenities = new ArrayList<>();
 
+    public HotelModel(Integer id, String name, String address, double rating) {
+        this.id = id;
+        this.name = name;
+        this.address = address;
+        this.rating = rating;
+    }
+
     public Integer getId() {
         return id;
     }

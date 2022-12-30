@@ -95,11 +95,7 @@ public class HotelEndpoints {
     public CreateHotelResponse processCreateHotelRequest(@RequestPayload CreateHotelRequest request) {
         CreateHotelResponse response = new CreateHotelResponse();
         ServiceStatus serviceStatus = new ServiceStatus();
-        HotelModel hotel = new HotelModel();
-        hotel.setId(null);
-        hotel.setName(request.getName());
-        hotel.setAddress(request.getAddress());
-        hotel.setRating(request.getRating());
+        HotelModel hotel = new HotelModel(null, request.getName(), request.getAddress(), request.getRating());
         HotelModel hotelCreated = hotelService.createHotel(hotel);
         serviceStatus.setStatusCode(201);
         serviceStatus.setStatusName("SUCCESS");
@@ -126,11 +122,8 @@ public class HotelEndpoints {
             response.setServiceStatus(serviceStatus);
             return response;
         }
-        HotelModel hotel = new HotelModel();
-        hotel.setId(request.getId());
-        hotel.setName(request.getName());
-        hotel.setAddress(request.getAddress());
-        hotel.setRating(request.getRating());
+        HotelModel hotel = new HotelModel(request.getId(), request.getName(), request.getAddress(),
+                request.getRating());
         HotelModel hotelUpdated = hotelService.updateHotel(hotel);
         serviceStatus.setStatusCode(200);
         serviceStatus.setStatusName("SUCCESS");

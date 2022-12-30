@@ -29,10 +29,6 @@ public class HotelService {
         return hotelRepository.findById(id).isPresent();
     }
 
-    public List<HotelModel> getAll() {
-        return hotelRepository.findAll();
-    }
-
     public Page<HotelModel> filterHotels(String name, int page, int size) {
         return hotelRepository.findByNameContaining(name, PageRequest.of(page, size));
     }
