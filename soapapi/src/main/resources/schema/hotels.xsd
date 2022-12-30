@@ -3,10 +3,34 @@
 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" targetNamespace="http://localhost:8081/hotels"
   xmlns:tns="http://localhost:8081/hotels" elementFormDefault="qualified">
 
-  <xs:element name="GetAllHotelsRequest">
+  <xs:element name="getAllHotelsRequest">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element name= "page" type="xs:int"/>
+      </xs:sequence>
+    </xs:complexType>
   </xs:element>
 
-  <xs:element name="GetHotelsRequest">
+  <xs:complexType name="page">
+    <xs:sequence>
+      <xs:element name="total" type="xs:long"/>
+      <xs:element name="page" type="xs:int"/>
+      <xs:element name="size" type="xs:int"/>
+      <xs:sequence minOccurs="0" maxOccurs="unbounded">
+        <xs:element name="items" type="tns:hotel"/>
+      </xs:sequence>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:element name="getAllHotelsResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element name= "page" type="tns:page"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name="filterHotelsRequest">
     <xs:complexType>
       <xs:sequence>
         <xs:element name= "name" type="xs:string"/>
@@ -15,7 +39,15 @@
     </xs:complexType>
   </xs:element>
 
-  <xs:element name="GetHotelRequest">
+  <xs:element name="filterHotelsResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element name= "page" type="tns:page"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name="getHotelByIdRequest">
     <xs:complexType>
       <xs:sequence>
         <xs:element name= "id" type="xs:int"/>
@@ -23,47 +55,35 @@
     </xs:complexType>
   </xs:element>
 
-  <xs:element name="GetHotelResponse">
-    <xs:complexType>
-      <xs:sequence>
-        <xs:element name= "Hotel" type="tns:Hotel"/>
-      </xs:sequence>
-    </xs:complexType>
-  </xs:element>
-
-  <xs:element name="Pagination">
-    <xs:complexType>
-      <xs:sequence>
-        <xs:element name="total" type="xs:long"/>
-        <xs:element name="page" type="xs:int"/>
-        <xs:element name="size" type="xs:int"/>
-        <xs:sequence minOccurs="0" maxOccurs="unbounded">
-          <xs:element name="items" type="tns:Hotel"/>
-        </xs:sequence>
-      </xs:sequence>
-    </xs:complexType>
-  </xs:element>
-
-  <xs:complexType name="Hotel">
+  <xs:complexType name="hotel">
     <xs:sequence>
       <xs:element name="id" type="xs:int"/>
       <xs:element name="name" type="xs:string"/>
       <xs:element name="address" type="xs:string"/>
       <xs:element name="rating" type="xs:double"/>
       <xs:sequence minOccurs="0" maxOccurs="unbounded">
-        <xs:element name="amenities" type="tns:Amenity"/>
+        <xs:element name="amenities" type="tns:amenity"/>
       </xs:sequence>
     </xs:sequence>
   </xs:complexType>
 
-  <xs:complexType name="Amenity">
+  <xs:complexType name="amenity">
     <xs:sequence>
       <xs:element name="id" type="xs:int"/>
       <xs:element name="name" type="xs:string"/>
     </xs:sequence>
   </xs:complexType>
 
-  <xs:element name="CreateHotelRequest">
+  <xs:element name="getHotelByIdResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element name= "hotel" type="tns:hotel"/>
+        <xs:element name= "serviceStatus" type="tns:serviceStatus"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name="createHotelRequest">
     <xs:complexType>
       <xs:sequence>
         <xs:element name="name" type="xs:string"/>
@@ -73,7 +93,16 @@
     </xs:complexType>
   </xs:element>
 
-  <xs:element name="UpdateHotelRequest">
+  <xs:element name="createHotelResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element name= "hotel" type="tns:hotel"/>
+        <xs:element name= "serviceStatus" type="tns:serviceStatus"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name="updateHotelRequest">
     <xs:complexType>
       <xs:sequence>
         <xs:element name="id" type="xs:int"/>
@@ -84,7 +113,16 @@
     </xs:complexType>
   </xs:element>
 
-  <xs:element name="DeleteHotelRequest">
+  <xs:element name="updateHotelResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element name= "hotel" type="tns:hotel"/>
+        <xs:element name= "serviceStatus" type="tns:serviceStatus"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name="deleteHotelRequest">
     <xs:complexType>
       <xs:sequence>
         <xs:element name="id" type="xs:int"/>
@@ -92,7 +130,16 @@
     </xs:complexType>
   </xs:element>
 
-  <xs:element name="AddAmenityHotelRequest">
+  <xs:element name="deleteHotelResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element name= "hotel" type="tns:hotel"/>
+        <xs:element name= "serviceStatus" type="tns:serviceStatus"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name="addAmenityHotelRequest">
     <xs:complexType>
       <xs:sequence>
         <xs:element name="idHotel" type="xs:int"/>
@@ -101,7 +148,16 @@
     </xs:complexType>
   </xs:element>
 
-  <xs:element name="RemoveAmenityHotelRequest">
+  <xs:element name="addAmenityHotelResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element name= "hotel" type="tns:hotel"/>
+        <xs:element name= "serviceStatus" type="tns:serviceStatus"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name="removeAmenityHotelRequest">
     <xs:complexType>
       <xs:sequence>
         <xs:element name="idHotel" type="xs:int"/>
@@ -109,4 +165,21 @@
       </xs:sequence>
     </xs:complexType>
   </xs:element>
+
+  <xs:element name="removeAmenityHotelResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element name= "hotel" type="tns:hotel"/>
+        <xs:element name= "serviceStatus" type="tns:serviceStatus"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+
+  <xs:complexType name="serviceStatus">
+    <xs:sequence>
+      <xs:element name="statusCode" type="xs:int"/>
+      <xs:element name="statusName" type="xs:string"/>
+      <xs:element name="message" type="xs:string"/>
+    </xs:sequence>
+  </xs:complexType>
 </xs:schema>

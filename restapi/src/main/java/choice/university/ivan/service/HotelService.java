@@ -1,99 +1,93 @@
 package choice.university.ivan.service;
 
-import java.util.List;
 
 import org.springframework.ws.client.core.support.WebServiceGatewaySupport;
 
 import choice.university.ivan.model.HotelModel;
 import choice.university.ivan.schemas.AddAmenityHotelRequest;
-import choice.university.ivan.schemas.Amenity;
+import choice.university.ivan.schemas.AddAmenityHotelResponse;
 import choice.university.ivan.schemas.CreateHotelRequest;
+import choice.university.ivan.schemas.CreateHotelResponse;
 import choice.university.ivan.schemas.DeleteHotelRequest;
-import choice.university.ivan.schemas.GetHotelRequest;
-import choice.university.ivan.schemas.GetHotelResponse;
-import choice.university.ivan.schemas.GetHotelsRequest;
-import choice.university.ivan.schemas.Pagination;
+import choice.university.ivan.schemas.DeleteHotelResponse;
+import choice.university.ivan.schemas.FilterHotelsRequest;
+import choice.university.ivan.schemas.FilterHotelsResponse;
+import choice.university.ivan.schemas.GetHotelByIdRequest;
+import choice.university.ivan.schemas.GetHotelByIdResponse;
 import choice.university.ivan.schemas.RemoveAmenityHotelRequest;
+import choice.university.ivan.schemas.RemoveAmenityHotelResponse;
 import choice.university.ivan.schemas.UpdateHotelRequest;
+import choice.university.ivan.schemas.UpdateHotelResponse;
 
 public class HotelService extends WebServiceGatewaySupport {
-    public GetHotelResponse getHotelById(int id) {
-        GetHotelRequest request = new GetHotelRequest();
+    public GetHotelByIdResponse getHotelById(int id) {
+        GetHotelByIdRequest request = new GetHotelByIdRequest();
         request.setId(id);
 
-        GetHotelResponse response = (GetHotelResponse) getWebServiceTemplate()
+        GetHotelByIdResponse response = (GetHotelByIdResponse) getWebServiceTemplate()
                 .marshalSendAndReceive(request);
         return response;
     }
 
-    public List<Amenity> getAmenitiesByHotelId(int id) {
-        GetHotelRequest request = new GetHotelRequest();
-        request.setId(id);
-
-        GetHotelResponse response = (GetHotelResponse) getWebServiceTemplate()
-                .marshalSendAndReceive(request);
-        return response.getHotel().getAmenities();
-    }
-
-    public Pagination filterHotels(String name, int page) {
-        GetHotelsRequest request = new GetHotelsRequest();
+    public FilterHotelsResponse filterHotels(String name, int page) {
+        FilterHotelsRequest request = new FilterHotelsRequest();
         request.setName(name);
         request.setPage(page);
 
-        Pagination response = (Pagination) getWebServiceTemplate()
+        FilterHotelsResponse response = (FilterHotelsResponse) getWebServiceTemplate()
                 .marshalSendAndReceive(request);
         return response;
     }
 
-    public GetHotelResponse createHotel(HotelModel hotel) {
+    public CreateHotelResponse createHotel(HotelModel hotel) {
         CreateHotelRequest request = new CreateHotelRequest();
         request.setName(hotel.getName());
         request.setAddress(hotel.getAddress());
         request.setRating(hotel.getRating());
 
-        GetHotelResponse response = (GetHotelResponse) getWebServiceTemplate()
+        CreateHotelResponse response = (CreateHotelResponse) getWebServiceTemplate()
                 .marshalSendAndReceive(request);
         return response;
     }
 
-    public GetHotelResponse updateHotel(HotelModel hotel) {
+    public UpdateHotelResponse updateHotel(HotelModel hotel) {
         UpdateHotelRequest request = new UpdateHotelRequest();
         request.setId(hotel.getId());
         request.setName(hotel.getName());
         request.setAddress(hotel.getAddress());
         request.setRating(hotel.getRating());
 
-        GetHotelResponse response = (GetHotelResponse) getWebServiceTemplate()
+        UpdateHotelResponse response = (UpdateHotelResponse) getWebServiceTemplate()
                 .marshalSendAndReceive(request);
         return response;
     }
 
-    public GetHotelResponse deleteHotel(int id) {
+    public DeleteHotelResponse deleteHotel(int id) {
         DeleteHotelRequest request = new DeleteHotelRequest();
         request.setId(id);
 
-        GetHotelResponse response = (GetHotelResponse) getWebServiceTemplate()
+        DeleteHotelResponse response = (DeleteHotelResponse) getWebServiceTemplate()
                 .marshalSendAndReceive(request);
         return response;
     }
 
-    public List<Amenity> addAmenityToHotelByIds(int idHotel, int idAmenity) {
+    public AddAmenityHotelResponse addAmenityToHotelByIds(int idHotel, int idAmenity) {
         AddAmenityHotelRequest request = new AddAmenityHotelRequest();
         request.setIdHotel(idHotel);
         request.setIdAmenity(idAmenity);
 
-        GetHotelResponse response = (GetHotelResponse) getWebServiceTemplate()
+        AddAmenityHotelResponse response = (AddAmenityHotelResponse) getWebServiceTemplate()
                 .marshalSendAndReceive(request);
-        return response.getHotel().getAmenities();
+        return response;
     }
 
-    public List<Amenity> removeAmenityFromHotelByIds(int idHotel, int idAmenity) {
+    public RemoveAmenityHotelResponse removeAmenityFromHotelByIds(int idHotel, int idAmenity) {
         RemoveAmenityHotelRequest request = new RemoveAmenityHotelRequest();
         request.setIdHotel(idHotel);
         request.setIdAmenity(idAmenity);
 
-        GetHotelResponse response = (GetHotelResponse) getWebServiceTemplate()
+        RemoveAmenityHotelResponse response = (RemoveAmenityHotelResponse) getWebServiceTemplate()
                 .marshalSendAndReceive(request);
-        return response.getHotel().getAmenities();
+        return response;
     }
 }

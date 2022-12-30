@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
@@ -24,6 +25,10 @@ public class HotelService {
         return hotelRepository.findById(id);
     }
 
+    public Boolean hotelWithIdExists(int id) {
+        return hotelRepository.findById(id).isPresent();
+    }
+
     public List<HotelModel> getAll() {
         return hotelRepository.findAll();
     }
@@ -33,7 +38,13 @@ public class HotelService {
     }
 
     public HotelModel createHotel(HotelModel hotel) {
-        return hotelRepository.save(hotel);
+        HotelModel hotelCreated = null;
+        try {
+            hotelCreated = hotelRepository.save(hotel);
+        } catch (DataIntegrityViolationException e) {
+            return null;
+        }
+        return hotelCreated;
     }
 
     public HotelModel updateHotel(HotelModel hotel) {
