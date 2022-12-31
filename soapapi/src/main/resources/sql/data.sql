@@ -1,4 +1,3 @@
--- Active: 1671845560816@@127.0.0.1@5432@docker@public
 INSERT INTO amenities (id, name) VALUES (1, 'pool');
 INSERT INTO amenities (id, name) VALUES (2, 'internet');
 INSERT INTO amenities (id, name) VALUES (3, 'wifi');

@@ -12,6 +12,9 @@ public class AmenityModel {
     private Integer id;
     private String name;
 
+    public AmenityModel() {
+    }
+
     public AmenityModel(Integer id, String name) {
         this.id = id;
         this.name = name;
