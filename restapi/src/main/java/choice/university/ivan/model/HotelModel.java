@@ -58,4 +58,22 @@ public class HotelModel {
         this.amenities = amenities;
     }
 
+    @Override
+    public boolean equals(Object obj) {
+        if (obj.getClass() != this.getClass())
+            return false;
+        HotelModel hotelModel = (HotelModel) obj;
+        if (hotelModel.getId() != this.getId())
+            return false;
+        if (!hotelModel.getName().equals(this.getName()))
+            return false;
+        if (!hotelModel.getAddress().equals(this.getAddress()))
+            return false;
+        if (hotelModel.getRating() != this.getRating())
+            return false;
+        if (!hotelModel.getAmenities().equals(this.getAmenities()))
+            return false;
+        return true;
+    }
+
 }

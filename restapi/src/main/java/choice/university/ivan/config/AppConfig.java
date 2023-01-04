@@ -16,7 +16,7 @@ public class AppConfig {
     }
 
     @Bean
-    public HotelService countryClient(Jaxb2Marshaller marshaller) {
+    public HotelService hotelClient(Jaxb2Marshaller marshaller) {
         HotelService client = new HotelService();
         client.setDefaultUri("http://localhost:8081/ws/hotels");
         client.setMarshaller(marshaller);

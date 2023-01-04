@@ -32,7 +32,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 @RequestMapping("/hotels")
 public class HotelController {
     @Autowired
-    HotelService hotelService;
+    private HotelService hotelService;
 
     @GetMapping
     public FilterHotelsResponse filterHotels(
