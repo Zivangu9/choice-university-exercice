@@ -3,32 +3,27 @@ package choice.university.ivan.controller;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import org.junit.Before;
+import java.util.List;
+
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.springframework.test.context.junit4.SpringRunner;
-import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.MockMvcBuilder;
-import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-import org.springframework.web.servlet.ModelAndView;
 
-import choice.university.ivan.config.AppConfig;
 import choice.university.ivan.mapper.HotelMapper;
+import choice.university.ivan.model.AmenityModel;
 import choice.university.ivan.model.HotelModel;
+import choice.university.ivan.schemas.AddAmenityHotelResponse;
+import choice.university.ivan.schemas.Amenity;
 import choice.university.ivan.schemas.CreateHotelResponse;
+import choice.university.ivan.schemas.DeleteHotelResponse;
 import choice.university.ivan.schemas.GetHotelByIdResponse;
 import choice.university.ivan.schemas.Hotel;
+import choice.university.ivan.schemas.RemoveAmenityHotelResponse;
 import choice.university.ivan.schemas.ServiceStatus;
 import choice.university.ivan.schemas.UpdateHotelResponse;
 import choice.university.ivan.service.HotelService;
@@ -42,15 +37,6 @@ public class HotelControllerTest {
     @Mock
     private HotelService hotelService;
 
-    // @Mock
-    // private AppConfig appConfig;
-    // private MockMvc mockMvc;
-
-    // @Before
-    // public void setup() {
-    // this.mockMvc = MockMvcBuilders.standaloneSetup(hotelController).build();
-    // }
-
     @Test
     public void contextLoad() {
         assertNotNull(hotelController);
@@ -58,7 +44,7 @@ public class HotelControllerTest {
     }
 
     @Test
-    public void getHotelFoundByID() {
+    public void getHotelByID() {
         GetHotelByIdResponse getHotelByIdResponse = new GetHotelByIdResponse();
 
         Hotel hotel = new Hotel();
@@ -191,5 +177,162 @@ public class HotelControllerTest {
 
         ResponseEntity<HotelModel> responseEntity = hotelController.updateHotel(1, hotelToUpdate);
         assertEquals(responseEntity.getStatusCode(), HttpStatus.NOT_FOUND);
+    }
+
+    @Test
+    public void deleteHotelByID() {
+        DeleteHotelResponse deleteHotelResponse = new DeleteHotelResponse();
+        Hotel hotel = new Hotel();
+        hotel.setId(1);
+        hotel.setName("Hotel Deleted");
+        hotel.setAddress("Address");
+        hotel.setRating(7.8);
+        deleteHotelResponse.setHotel(hotel);
+        ServiceStatus serviceStatus = new ServiceStatus();
+        serviceStatus.setStatusCode(200);
+        deleteHotelResponse.setServiceStatus(serviceStatus);
+
+        when(hotelService.deleteHotel(1)).thenReturn(deleteHotelResponse);
+
+        ResponseEntity<HotelModel> responseEntity = hotelController.deleteHotelByID(1);
+        HotelModel hotelModel = HotelMapper.getHotelModel(hotel);
+        assertEquals(responseEntity.getStatusCode(), HttpStatus.OK);
+        assertEquals(responseEntity.getBody(), hotelModel);
+    }
+
+    @Test
+    public void deleteHotelConflict() {
+        DeleteHotelResponse deleteHotelResponse = new DeleteHotelResponse();
+        ServiceStatus serviceStatus = new ServiceStatus();
+        serviceStatus.setStatusCode(409);
+        deleteHotelResponse.setServiceStatus(serviceStatus);
+
+        when(hotelService.deleteHotel(1)).thenReturn(deleteHotelResponse);
+
+        ResponseEntity<HotelModel> responseEntity = hotelController.deleteHotelByID(1);
+        assertEquals(responseEntity.getStatusCode(), HttpStatus.CONFLICT);
+    }
+
+    @Test
+    public void deleteHotelNotFound() {
+        DeleteHotelResponse deleteHotelResponse = new DeleteHotelResponse();
+        ServiceStatus serviceStatus = new ServiceStatus();
+        serviceStatus.setStatusCode(404);
+        deleteHotelResponse.setServiceStatus(serviceStatus);
+
+        when(hotelService.deleteHotel(1)).thenReturn(deleteHotelResponse);
+
+        ResponseEntity<HotelModel> responseEntity = hotelController.deleteHotelByID(1);
+        assertEquals(responseEntity.getStatusCode(), HttpStatus.NOT_FOUND);
+    }
+
+    @Test
+    public void addHotelAmenityByIds() {
+        AddAmenityHotelResponse addAmenityHotelResponse = new AddAmenityHotelResponse();
+        Hotel hotel = new Hotel();
+        hotel.setId(1);
+        hotel.setName("Hotel Updated");
+        hotel.setAddress("Address");
+        hotel.setRating(7.9);
+        Amenity amenity1 = new Amenity();
+        amenity1.setId(1);
+        amenity1.setName("Wifi");
+        Amenity amenity2 = new Amenity();
+        amenity2.setId(2);
+        amenity2.setName("Pool");
+        hotel.getAmenities().add(amenity1);
+        hotel.getAmenities().add(amenity2);
+        addAmenityHotelResponse.setHotel(hotel);
+
+        ServiceStatus serviceStatus = new ServiceStatus();
+        serviceStatus.setStatusCode(201);
+        addAmenityHotelResponse.setServiceStatus(serviceStatus);
+
+        when(hotelService.addAmenityToHotelByIds(1, 1)).thenReturn(addAmenityHotelResponse);
+
+        ResponseEntity<List<AmenityModel>> responseEntity = hotelController.addHotelAmenityByIds(1, 1);
+        assertEquals(responseEntity.getStatusCode(), HttpStatus.OK);
+        assertEquals(responseEntity.getBody(), HotelMapper.getAmenities(hotel.getAmenities()));
+    }
+
+    @Test
+    public void addHotelAmenityByIdsNotFound() {
+        AddAmenityHotelResponse addAmenityHotelResponse = new AddAmenityHotelResponse();
+        ServiceStatus serviceStatus = new ServiceStatus();
+        serviceStatus.setStatusCode(404);
+        addAmenityHotelResponse.setServiceStatus(serviceStatus);
+
+        when(hotelService.addAmenityToHotelByIds(1, 1)).thenReturn(addAmenityHotelResponse);
+
+        ResponseEntity<List<AmenityModel>> responseEntity = hotelController.addHotelAmenityByIds(1, 1);
+        assertEquals(responseEntity.getStatusCode(), HttpStatus.NOT_FOUND);
+    }
+
+    @Test
+    public void addHotelAmenityByIdsConfict() {
+        AddAmenityHotelResponse addAmenityHotelResponse = new AddAmenityHotelResponse();
+        ServiceStatus serviceStatus = new ServiceStatus();
+        serviceStatus.setStatusCode(409);
+        addAmenityHotelResponse.setServiceStatus(serviceStatus);
+
+        when(hotelService.addAmenityToHotelByIds(1, 1)).thenReturn(addAmenityHotelResponse);
+
+        ResponseEntity<List<AmenityModel>> responseEntity = hotelController.addHotelAmenityByIds(1, 1);
+        assertEquals(responseEntity.getStatusCode(), HttpStatus.CONFLICT);
+    }
+
+    @Test
+    public void removeHotelAmenityByIds() {
+        RemoveAmenityHotelResponse removeAmenityHotelResponse = new RemoveAmenityHotelResponse();
+        Hotel hotel = new Hotel();
+        hotel.setId(1);
+        hotel.setName("Hotel Updated");
+        hotel.setAddress("Address");
+        hotel.setRating(7.9);
+        Amenity amenity1 = new Amenity();
+        amenity1.setId(1);
+        amenity1.setName("Wifi");
+        Amenity amenity2 = new Amenity();
+        amenity2.setId(2);
+        amenity2.setName("Pool");
+        hotel.getAmenities().add(amenity1);
+        hotel.getAmenities().add(amenity2);
+        removeAmenityHotelResponse.setHotel(hotel);
+
+        ServiceStatus serviceStatus = new ServiceStatus();
+        serviceStatus.setStatusCode(201);
+        removeAmenityHotelResponse.setServiceStatus(serviceStatus);
+
+        when(hotelService.removeAmenityFromHotelByIds(1, 1)).thenReturn(removeAmenityHotelResponse);
+
+        ResponseEntity<List<AmenityModel>> responseEntity = hotelController.removeHotelAmenityByIds(1, 1);
+        assertEquals(responseEntity.getStatusCode(), HttpStatus.OK);
+        assertEquals(responseEntity.getBody(), HotelMapper.getAmenities(hotel.getAmenities()));
+    }
+
+    @Test
+    public void removeHotelAmenityByIdsNotFound() {
+        RemoveAmenityHotelResponse removeAmenityHotelResponse = new RemoveAmenityHotelResponse();
+        ServiceStatus serviceStatus = new ServiceStatus();
+        serviceStatus.setStatusCode(404);
+        removeAmenityHotelResponse.setServiceStatus(serviceStatus);
+
+        when(hotelService.removeAmenityFromHotelByIds(1, 1)).thenReturn(removeAmenityHotelResponse);
+
+        ResponseEntity<List<AmenityModel>> responseEntity = hotelController.removeHotelAmenityByIds(1, 1);
+        assertEquals(responseEntity.getStatusCode(), HttpStatus.NOT_FOUND);
+    }
+
+    @Test
+    public void removeHotelAmenityByIdsConfict() {
+        RemoveAmenityHotelResponse removeAmenityHotelResponse = new RemoveAmenityHotelResponse();
+        ServiceStatus serviceStatus = new ServiceStatus();
+        serviceStatus.setStatusCode(409);
+        removeAmenityHotelResponse.setServiceStatus(serviceStatus);
+
+        when(hotelService.removeAmenityFromHotelByIds(1, 1)).thenReturn(removeAmenityHotelResponse);
+
+        ResponseEntity<List<AmenityModel>> responseEntity = hotelController.removeHotelAmenityByIds(1, 1);
+        assertEquals(responseEntity.getStatusCode(), HttpStatus.CONFLICT);
     }
 }

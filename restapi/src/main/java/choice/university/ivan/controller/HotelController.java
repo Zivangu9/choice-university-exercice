@@ -99,7 +99,7 @@ public class HotelController {
     }
 
     @PutMapping("/{hotelId}/amenities/{amenityId}")
-    public ResponseEntity<List<AmenityModel>> addHotelAmenityModel(@PathVariable("hotelId") int hotelId,
+    public ResponseEntity<List<AmenityModel>> addHotelAmenityByIds(@PathVariable("hotelId") int hotelId,
             @PathVariable("amenityId") int amenityId) {
         AddAmenityHotelResponse addAmenityHotelResponse = hotelService.addAmenityToHotelByIds(hotelId, amenityId);
         if (addAmenityHotelResponse.getServiceStatus().getStatusCode() == 404) {
@@ -113,7 +113,7 @@ public class HotelController {
     }
 
     @DeleteMapping("/{hotelId}/amenities/{amenityId}")
-    public ResponseEntity<List<AmenityModel>> deleteHotelAmenityModel(@PathVariable("hotelId") int hotelId,
+    public ResponseEntity<List<AmenityModel>> removeHotelAmenityByIds(@PathVariable("hotelId") int hotelId,
             @PathVariable("amenityId") int amenityId) {
         RemoveAmenityHotelResponse removeAmenityHotelResponse = hotelService.removeAmenityFromHotelByIds(hotelId,
                 amenityId);

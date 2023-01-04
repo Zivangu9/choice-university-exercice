@@ -59,19 +59,46 @@ public class HotelModel {
     }
 
     @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + id;
+        result = prime * result + ((name == null) ? 0 : name.hashCode());
+        result = prime * result + ((address == null) ? 0 : address.hashCode());
+        long temp;
+        temp = Double.doubleToLongBits(rating);
+        result = prime * result + (int) (temp ^ (temp >>> 32));
+        result = prime * result + ((amenities == null) ? 0 : amenities.hashCode());
+        return result;
+    }
+
+    @Override
     public boolean equals(Object obj) {
-        if (obj.getClass() != this.getClass())
+        if (this == obj)
+            return true;
+        if (obj == null)
             return false;
-        HotelModel hotelModel = (HotelModel) obj;
-        if (hotelModel.getId() != this.getId())
+        if (getClass() != obj.getClass())
             return false;
-        if (!hotelModel.getName().equals(this.getName()))
+        HotelModel other = (HotelModel) obj;
+        if (id != other.id)
             return false;
-        if (!hotelModel.getAddress().equals(this.getAddress()))
+        if (name == null) {
+            if (other.name != null)
+                return false;
+        } else if (!name.equals(other.name))
             return false;
-        if (hotelModel.getRating() != this.getRating())
+        if (address == null) {
+            if (other.address != null)
+                return false;
+        } else if (!address.equals(other.address))
             return false;
-        if (!hotelModel.getAmenities().equals(this.getAmenities()))
+        if (Double.doubleToLongBits(rating) != Double.doubleToLongBits(other.rating))
+            return false;
+        if (amenities == null) {
+            if (other.amenities != null)
+                return false;
+        } else if (!amenities.equals(other.amenities))
             return false;
         return true;
     }
