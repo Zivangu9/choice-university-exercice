@@ -38,13 +38,13 @@ public class HotelControllerTest {
     private HotelService hotelService;
 
     @Test
-    public void contextLoad() {
+    public void testContextLoad() {
         assertNotNull(hotelController);
         assertNotNull(hotelService);
     }
 
     @Test
-    public void getHotelByID() {
+    public void testGetHotelByID() {
         GetHotelByIdResponse getHotelByIdResponse = new GetHotelByIdResponse();
 
         Hotel hotel = new Hotel();
@@ -65,7 +65,7 @@ public class HotelControllerTest {
     }
 
     @Test
-    public void getHotelNotFoundByID() {
+    public void testGetHotelNotFoundByID() {
         GetHotelByIdResponse getHotelByIdResponse = new GetHotelByIdResponse();
         ServiceStatus serviceStatus = new ServiceStatus();
         serviceStatus.setStatusCode(404);
@@ -78,7 +78,7 @@ public class HotelControllerTest {
     }
 
     @Test
-    public void createHotel() {
+    public void testCreateHotel() {
         CreateHotelResponse createHotelResponse = new CreateHotelResponse();
         HotelModel hotelToCreate = new HotelModel();
         hotelToCreate.setName("Hotel Created");
@@ -103,7 +103,7 @@ public class HotelControllerTest {
     }
 
     @Test
-    public void createHotelConflict() {
+    public void testCreateHotelConflict() {
         CreateHotelResponse createHotelResponse = new CreateHotelResponse();
         HotelModel hotelToCreate = new HotelModel();
         hotelToCreate.setName("Hotel Created");
@@ -120,7 +120,7 @@ public class HotelControllerTest {
     }
 
     @Test
-    public void updateHotel() {
+    public void testUpdateHotel() {
         UpdateHotelResponse updateHotelResponse = new UpdateHotelResponse();
         HotelModel hotelToUpdate = new HotelModel();
         hotelToUpdate.setId(1);
@@ -146,7 +146,7 @@ public class HotelControllerTest {
     }
 
     @Test
-    public void updateHotelConflict() {
+    public void testUpdateHotelConflict() {
         UpdateHotelResponse updateHotelResponse = new UpdateHotelResponse();
         HotelModel hotelToUpdate = new HotelModel();
         hotelToUpdate.setName("Hotel Created");
@@ -163,7 +163,7 @@ public class HotelControllerTest {
     }
 
     @Test
-    public void updateHotelNotFound() {
+    public void testUpdateHotelNotFound() {
         UpdateHotelResponse updateHotelResponse = new UpdateHotelResponse();
         HotelModel hotelToUpdate = new HotelModel();
         hotelToUpdate.setName("Hotel Created");
@@ -180,7 +180,7 @@ public class HotelControllerTest {
     }
 
     @Test
-    public void deleteHotelByID() {
+    public void testDeleteHotelByID() {
         DeleteHotelResponse deleteHotelResponse = new DeleteHotelResponse();
         Hotel hotel = new Hotel();
         hotel.setId(1);
@@ -201,7 +201,7 @@ public class HotelControllerTest {
     }
 
     @Test
-    public void deleteHotelConflict() {
+    public void testDeleteHotelConflict() {
         DeleteHotelResponse deleteHotelResponse = new DeleteHotelResponse();
         ServiceStatus serviceStatus = new ServiceStatus();
         serviceStatus.setStatusCode(409);
@@ -214,7 +214,7 @@ public class HotelControllerTest {
     }
 
     @Test
-    public void deleteHotelNotFound() {
+    public void testDeleteHotelNotFound() {
         DeleteHotelResponse deleteHotelResponse = new DeleteHotelResponse();
         ServiceStatus serviceStatus = new ServiceStatus();
         serviceStatus.setStatusCode(404);
@@ -227,7 +227,7 @@ public class HotelControllerTest {
     }
 
     @Test
-    public void addHotelAmenityByIds() {
+    public void testAddHotelAmenityByIds() {
         AddAmenityHotelResponse addAmenityHotelResponse = new AddAmenityHotelResponse();
         Hotel hotel = new Hotel();
         hotel.setId(1);
@@ -256,7 +256,7 @@ public class HotelControllerTest {
     }
 
     @Test
-    public void addHotelAmenityByIdsNotFound() {
+    public void testAddHotelAmenityByIdsNotFound() {
         AddAmenityHotelResponse addAmenityHotelResponse = new AddAmenityHotelResponse();
         ServiceStatus serviceStatus = new ServiceStatus();
         serviceStatus.setStatusCode(404);
@@ -269,7 +269,7 @@ public class HotelControllerTest {
     }
 
     @Test
-    public void addHotelAmenityByIdsConfict() {
+    public void testAddHotelAmenityByIdsConfict() {
         AddAmenityHotelResponse addAmenityHotelResponse = new AddAmenityHotelResponse();
         ServiceStatus serviceStatus = new ServiceStatus();
         serviceStatus.setStatusCode(409);
@@ -282,7 +282,7 @@ public class HotelControllerTest {
     }
 
     @Test
-    public void removeHotelAmenityByIds() {
+    public void testRemoveHotelAmenityByIds() {
         RemoveAmenityHotelResponse removeAmenityHotelResponse = new RemoveAmenityHotelResponse();
         Hotel hotel = new Hotel();
         hotel.setId(1);
@@ -311,7 +311,7 @@ public class HotelControllerTest {
     }
 
     @Test
-    public void removeHotelAmenityByIdsNotFound() {
+    public void testRemoveHotelAmenityByIdsNotFound() {
         RemoveAmenityHotelResponse removeAmenityHotelResponse = new RemoveAmenityHotelResponse();
         ServiceStatus serviceStatus = new ServiceStatus();
         serviceStatus.setStatusCode(404);
@@ -324,7 +324,7 @@ public class HotelControllerTest {
     }
 
     @Test
-    public void removeHotelAmenityByIdsConfict() {
+    public void testRemoveHotelAmenityByIdsConfict() {
         RemoveAmenityHotelResponse removeAmenityHotelResponse = new RemoveAmenityHotelResponse();
         ServiceStatus serviceStatus = new ServiceStatus();
         serviceStatus.setStatusCode(409);

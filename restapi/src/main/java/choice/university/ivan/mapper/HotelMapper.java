@@ -36,9 +36,8 @@ public class HotelMapper {
     }
 
     public static AmenityModel getAmenity(Amenity amenitySchema) {
-        AmenityModel amenityModel = new AmenityModel();
-        amenityModel.setId(amenitySchema.getId());
-        amenityModel.setName(amenitySchema.getName());
+        AmenityModel amenityModel = new AmenityModel(amenitySchema.getId(),
+                amenitySchema.getName());
         return amenityModel;
     }
 }
