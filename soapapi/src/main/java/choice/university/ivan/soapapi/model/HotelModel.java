@@ -79,7 +79,7 @@ public class HotelModel {
         long temp;
         temp = Double.doubleToLongBits(rating);
         result = prime * result + (int) (temp ^ (temp >>> 32));
-        result = prime * result + ((amenities == null) ? 0 : amenities.hashCode());
+        result = prime * result + amenities.hashCode();
         return result;
     }
 
@@ -109,10 +109,7 @@ public class HotelModel {
             return false;
         if (Double.doubleToLongBits(rating) != Double.doubleToLongBits(other.rating))
             return false;
-        if (amenities == null) {
-            if (other.amenities != null)
-                return false;
-        } else if (!amenities.equals(other.amenities))
+        if (!amenities.equals(other.amenities))
             return false;
         return true;
     }
