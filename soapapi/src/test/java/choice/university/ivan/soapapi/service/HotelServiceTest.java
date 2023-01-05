@@ -28,11 +28,11 @@ import choice.university.ivan.soapapi.repository.HotelRepository;
 @ExtendWith(SpringExtension.class)
 public class HotelServiceTest {
     @Mock
-    HotelRepository hotelRepository;
+    private HotelRepository hotelRepository;
     @Mock
-    AmenityRepository amenityRepository;
+    private AmenityRepository amenityRepository;
     @InjectMocks
-    HotelService hotelService;
+    private HotelService hotelService;
 
     @Test
     void contextLoads() {

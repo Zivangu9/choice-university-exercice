@@ -17,9 +17,9 @@ import choice.university.ivan.soapapi.repository.AmenityRepository;
 @ExtendWith(SpringExtension.class)
 public class AmenityServiceTest {
     @Mock
-    AmenityRepository amenityRepository;
+    private AmenityRepository amenityRepository;
     @InjectMocks
-    AmenityService amenityService;
+    private AmenityService amenityService;
 
     @Test
     void testAmenityWithIdExists() {
