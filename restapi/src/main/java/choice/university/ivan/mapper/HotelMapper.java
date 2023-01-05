@@ -9,13 +9,6 @@ import choice.university.ivan.schemas.Amenity;
 import choice.university.ivan.schemas.Hotel;
 
 public class HotelMapper {
-    public static List<HotelModel> getHotels(List<Hotel> hotels) {
-        List<HotelModel> hotelsModel = new ArrayList<>();
-        for (Hotel hotel : hotels) {
-            hotelsModel.add(getHotelModel(hotel));
-        }
-        return hotelsModel;
-    }
 
     public static HotelModel getHotelModel(Hotel hotel) {
         HotelModel hotelModel = new HotelModel();

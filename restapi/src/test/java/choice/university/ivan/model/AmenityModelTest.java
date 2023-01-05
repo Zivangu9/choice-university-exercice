@@ -37,6 +37,7 @@ public class AmenityModelTest {
         assertFalse(amenityModel.equals(null));
         assertFalse(amenityModel.equals(new Object()));
         assertFalse(amenityModel.equals(new AmenityModel(2, "Amenity Name")));
+        assertTrue(new AmenityModel(1, null).equals(new AmenityModel(1, null)));
         assertFalse(new AmenityModel(1, null).equals(amenityModel));
         assertFalse(amenityModel.equals(new AmenityModel(1, "Name")));
     }

@@ -6,5 +6,4 @@
 
     <bean id="hotelController" class="choice.university.ivan.controller.HotelController" />
     <bean id="hotelService" class="choice.university.ivan.service.HotelService" />
-    <bean id="appConfig" class="choice.university.ivan.config.AppConfig" />
 </beans>

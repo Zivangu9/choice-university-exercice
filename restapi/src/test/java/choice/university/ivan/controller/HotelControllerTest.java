@@ -4,6 +4,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.mockito.Mockito.when;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.junit.Test;
@@ -21,8 +22,10 @@ import choice.university.ivan.schemas.AddAmenityHotelResponse;
 import choice.university.ivan.schemas.Amenity;
 import choice.university.ivan.schemas.CreateHotelResponse;
 import choice.university.ivan.schemas.DeleteHotelResponse;
+import choice.university.ivan.schemas.FilterHotelsResponse;
 import choice.university.ivan.schemas.GetHotelByIdResponse;
 import choice.university.ivan.schemas.Hotel;
+import choice.university.ivan.schemas.Page;
 import choice.university.ivan.schemas.RemoveAmenityHotelResponse;
 import choice.university.ivan.schemas.ServiceStatus;
 import choice.university.ivan.schemas.UpdateHotelResponse;
@@ -41,6 +44,38 @@ public class HotelControllerTest {
     public void testContextLoad() {
         assertNotNull(hotelController);
         assertNotNull(hotelService);
+    }
+
+    @Test
+    public void testFilterHotels() {
+        FilterHotelsResponse filterHotelsResponseMock = new FilterHotelsResponse();
+        Page page = new Page();
+        page.setPage(0);
+        page.setSize(10);
+        page.setTotal(6);
+        filterHotelsResponseMock.setPage(page);
+        List<Hotel> hotels = new ArrayList<>();
+        Hotel hotel1 = new Hotel();
+        hotel1.setId(1);
+        hotel1.setName("Hotel Name");
+        hotel1.setAddress("Hotel Address");
+        hotel1.setRating(8.9);
+        Hotel hotel2 = new Hotel();
+        hotel2.setId(2);
+        hotel2.setName("Hotel Name");
+        hotel2.setAddress("Hotel Address");
+        hotel2.setRating(8.9);
+        hotels.add(hotel1);
+        hotels.add(hotel2);
+        page.getItems().add(hotel1);
+        page.getItems().add(hotel2);
+        when(hotelService.filterHotels("", 0)).thenReturn(filterHotelsResponseMock);
+
+        FilterHotelsResponse filterHotelsResponse = hotelController.filterHotels("", 0);
+
+        assertEquals(filterHotelsResponse.getPage(), page);
+        assertEquals(filterHotelsResponse, filterHotelsResponseMock);
+        assertEquals(filterHotelsResponse.getPage().getItems(), hotels);
     }
 
     @Test
@@ -227,6 +262,46 @@ public class HotelControllerTest {
     }
 
     @Test
+    public void testGetHotelAmenities() {
+        GetHotelByIdResponse getHotelByIdResponse = new GetHotelByIdResponse();
+        Hotel hotel = new Hotel();
+        hotel.setId(1);
+        hotel.setName("Hotel Name");
+        hotel.setAddress("Hotel Address");
+        hotel.setRating(8.9);
+        List<Amenity> amenities = hotel.getAmenities();
+        Amenity amenity1 = new Amenity();
+        amenity1.setId(1);
+        amenity1.setName("Intenet");
+        Amenity amenity2 = new Amenity();
+        amenity2.setId(2);
+        amenity2.setName("WiFi");
+        amenities.add(amenity1);
+        amenities.add(amenity2);
+        getHotelByIdResponse.setHotel(hotel);
+        ServiceStatus serviceStatus = new ServiceStatus();
+        serviceStatus.setStatusCode(200);
+        getHotelByIdResponse.setServiceStatus(serviceStatus);
+        when(hotelService.getHotelById(1)).thenReturn(getHotelByIdResponse);
+
+        ResponseEntity<List<AmenityModel>> responseEntity = hotelController.getHotelAmenities(1);
+        assertEquals(responseEntity.getStatusCode(), HttpStatus.FOUND);
+        assertEquals(responseEntity.getBody(), HotelMapper.getAmenities(amenities));
+    }
+
+    @Test
+    public void testGetHotelAmenitiesNotFound() {
+        GetHotelByIdResponse getHotelByIdResponse = new GetHotelByIdResponse();
+        ServiceStatus serviceStatus = new ServiceStatus();
+        serviceStatus.setStatusCode(404);
+        getHotelByIdResponse.setServiceStatus(serviceStatus);
+        when(hotelService.getHotelById(1)).thenReturn(getHotelByIdResponse);
+
+        ResponseEntity<List<AmenityModel>> responseEntity = hotelController.getHotelAmenities(1);
+        assertEquals(responseEntity.getStatusCode(), HttpStatus.NOT_FOUND);
+    }
+
+    @Test
     public void testAddHotelAmenityByIds() {
         AddAmenityHotelResponse addAmenityHotelResponse = new AddAmenityHotelResponse();
         Hotel hotel = new Hotel();
@@ -335,4 +410,5 @@ public class HotelControllerTest {
         ResponseEntity<List<AmenityModel>> responseEntity = hotelController.removeHotelAmenityByIds(1, 1);
         assertEquals(responseEntity.getStatusCode(), HttpStatus.CONFLICT);
     }
+
 }

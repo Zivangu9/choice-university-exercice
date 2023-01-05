@@ -51,8 +51,10 @@ public class HotelModelTest {
         assertFalse(hotelModel.equals(new Object()));
         assertFalse(hotelModel.equals(new HotelModel(2, "Name", "Address")));
         assertTrue(new HotelModel(1, null, "Address").equals(new HotelModel(1, null, "Address")));
+        assertFalse(new HotelModel(1, null, "Address").equals(new HotelModel(1, "Name", "Address")));
         assertFalse(hotelModel.equals(new HotelModel(1, "Name", "Hotel Address")));
         assertTrue(new HotelModel(1, "Hotel Name", null).equals(new HotelModel(1, "Hotel Name", null)));
+        assertFalse(new HotelModel(1, "Hotel Name", null).equals(new HotelModel(1, "Hotel Name", "Hotel Address")));
         assertFalse(hotelModel.equals(new HotelModel(1, "Hotel Name", "Address")));
         assertFalse(hotelModel.equals(hotelModel2));
         hotelModel2.setRating(8.5);

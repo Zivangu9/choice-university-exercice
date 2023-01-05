@@ -60,7 +60,7 @@ mvn clean tomcat7:redeploy
 Generate test report
 
 ```bash
-mvn jacoco:prepare-agent test install jacoco:report
+mvn clean jacoco:prepare-agent test install jacoco:report
 ```
 
 ### SOAP API and Database
