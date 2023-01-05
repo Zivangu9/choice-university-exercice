@@ -37,9 +37,9 @@ import choice.university.ivan.schemas.UpdateHotelResponse;
 @ContextConfiguration(locations = { "/test-config.xml" })
 public class HotelServiceTest {
     @InjectMocks
-    HotelService hotelService;
+    private HotelService hotelService;
     @Mock
-    WebServiceTemplate webServiceTemplate;
+    private WebServiceTemplate webServiceTemplate;
 
     @Test
     public void testContextLoad() {

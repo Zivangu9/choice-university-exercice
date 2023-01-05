@@ -7,12 +7,17 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.when;
 
+import java.util.ArrayList;
 import java.util.Optional;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import choice.university.ivan.soapapi.model.AmenityModel;
@@ -38,6 +43,20 @@ public class HotelServiceTest {
     void testAddAmenityToHotel() {
         AmenityModel amenityToAdd = new AmenityModel(1, "Tested");
         HotelModel hotelToUpdate = new HotelModel(1, "Hotel with new amenity", "Address", 10);
+        hotelToUpdate.getAmenities().add(new AmenityModel(2, "WiFi"));
+        assertEquals(hotelToUpdate.getAmenities().size(), 1);
+        when(amenityRepository.findById(1)).thenReturn(Optional.of(amenityToAdd));
+        when(hotelRepository.findById(1)).thenReturn(Optional.of(hotelToUpdate));
+        when(hotelRepository.save(hotelToUpdate)).thenReturn(hotelToUpdate);
+        HotelModel hotelUpdated = hotelService.addAmenityToHotel(1, 1);
+        assertEquals(hotelUpdated.getAmenities().size(), 2);
+    }
+
+    @Test
+    void testAddAmenityToHotelRepeted() {
+        AmenityModel amenityToAdd = new AmenityModel(1, "Tested");
+        HotelModel hotelToUpdate = new HotelModel(1, "Hotel with new amenity", "Address", 10);
+        hotelToUpdate.getAmenities().add(amenityToAdd);
         when(amenityRepository.findById(1)).thenReturn(Optional.of(amenityToAdd));
         when(hotelRepository.findById(1)).thenReturn(Optional.of(hotelToUpdate));
         when(hotelRepository.save(hotelToUpdate)).thenReturn(hotelToUpdate);
@@ -72,6 +91,13 @@ public class HotelServiceTest {
     }
 
     @Test
+    void testCreateHotelError() {
+        HotelModel hotelToSave = new HotelModel(null, "New Hotel", "Address", 8);
+        when(hotelRepository.save(hotelToSave)).thenThrow(DataIntegrityViolationException.class);
+        assertNull(hotelService.createHotel(hotelToSave));
+    }
+
+    @Test
     void testDeleteHotel() {
         HotelModel hotelToDelete = new HotelModel(1, "Hotel to delete", "Address", 5.7);
         when(hotelRepository.findById(1)).thenReturn(Optional.of(hotelToDelete));
@@ -79,8 +105,17 @@ public class HotelServiceTest {
     }
 
     @Test
-    void testFilterHotels() {
+    void testDeleteHotelNotFound() {
+        when(hotelRepository.findById(1)).thenReturn(Optional.empty());
+        assertNull(hotelService.deleteHotel(1));
+    }
 
+    @Test
+    void testFilterHotels() {
+        PageRequest pagerRequest = PageRequest.of(0, 10);
+        Page<HotelModel> page = new PageImpl<>(new ArrayList<>());
+        when(hotelRepository.findByNameContaining("", pagerRequest)).thenReturn(page);
+        assertNotNull(hotelService.filterHotels("", 0, 10));
     }
 
     @Test
@@ -111,12 +146,13 @@ public class HotelServiceTest {
         AmenityModel amenityToRemove = new AmenityModel(1, "Tested");
         HotelModel hotelToUpdate = new HotelModel(1, "Hotel with new amenity", "Address", 10);
         hotelToUpdate.getAmenities().add(amenityToRemove);
-        assertEquals(hotelToUpdate.getAmenities().size(), 1);
+        hotelToUpdate.getAmenities().add(new AmenityModel(2, "WiFi"));
+        assertEquals(hotelToUpdate.getAmenities().size(), 2);
         when(amenityRepository.findById(1)).thenReturn(Optional.of(amenityToRemove));
         when(hotelRepository.findById(1)).thenReturn(Optional.of(hotelToUpdate));
         when(hotelRepository.save(hotelToUpdate)).thenReturn(hotelToUpdate);
         HotelModel hotelUpdated = hotelService.removeAmenityFromHotel(1, 1);
-        assertEquals(hotelUpdated.getAmenities().size(), 0);
+        assertEquals(hotelUpdated.getAmenities().size(), 1);
     }
 
     @Test

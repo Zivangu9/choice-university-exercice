@@ -41,7 +41,7 @@ public class HotelControllerTest {
     private HotelService hotelService;
 
     @Test
-    public void testContextLoad() {
+    public void testContextLoads() {
         assertNotNull(hotelController);
         assertNotNull(hotelService);
     }

@@ -60,7 +60,7 @@ mvn clean tomcat7:redeploy
 Generate test report
 
 ```bash
-mvn clean jacoco:prepare-agent test install jacoco:report
+mvn clean jacoco:prepare-agent test install jacoco:report compile
 ```
 
 ### SOAP API and Database
@@ -69,6 +69,14 @@ Start docker
 
 ```bash
 docker-compose up
+```
+
+## Testing
+
+Generate test report
+
+```bash
+mvn clean jacoco:prepare-agent test install jacoco:report compile
 ```
 
 ## Demo Data
