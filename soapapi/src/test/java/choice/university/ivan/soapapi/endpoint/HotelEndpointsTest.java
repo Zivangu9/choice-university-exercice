@@ -33,17 +33,17 @@ import choice.university.ivan.schemas.UpdateHotelRequest;
 import choice.university.ivan.schemas.UpdateHotelResponse;
 import choice.university.ivan.soapapi.model.AmenityModel;
 import choice.university.ivan.soapapi.model.HotelModel;
-import choice.university.ivan.soapapi.service.AmenityService;
-import choice.university.ivan.soapapi.service.HotelService;
+import choice.university.ivan.soapapi.service.AmenityServiceImpl;
+import choice.university.ivan.soapapi.service.HotelServiceImpl;
 
 @ExtendWith(SpringExtension.class)
 public class HotelEndpointsTest {
     @InjectMocks
     private HotelEndpoints hotelEndpoints;
     @Mock
-    private HotelService hotelService;
+    private HotelServiceImpl hotelService;
     @Mock
-    private AmenityService amenityService;
+    private AmenityServiceImpl amenityService;
 
     @Test
     public void testContextLoads() {

@@ -32,7 +32,7 @@ public class HotelServiceTest {
     @Mock
     private AmenityRepository amenityRepository;
     @InjectMocks
-    private HotelService hotelService;
+    private HotelServiceImpl hotelService;
 
     @Test
     void contextLoads() {

@@ -19,7 +19,7 @@ public class AmenityServiceTest {
     @Mock
     private AmenityRepository amenityRepository;
     @InjectMocks
-    private AmenityService amenityService;
+    private AmenityServiceImpl amenityService;
 
     @Test
     void testAmenityWithIdExists() {
