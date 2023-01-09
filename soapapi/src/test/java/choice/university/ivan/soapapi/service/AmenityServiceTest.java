@@ -1,5 +1,7 @@
 package choice.university.ivan.soapapi.service;
 
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.when;
 
@@ -11,6 +13,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
+import choice.university.ivan.soapapi.exception.NotFoundException;
 import choice.university.ivan.soapapi.model.AmenityModel;
 import choice.university.ivan.soapapi.repository.AmenityRepository;
 
@@ -22,9 +25,15 @@ public class AmenityServiceTest {
     private AmenityServiceImpl amenityService;
 
     @Test
-    void testAmenityWithIdExists() {
+    void testGetById() {
         AmenityModel amenityModel = new AmenityModel(1, "Internet");
         when(amenityRepository.findById(1)).thenReturn(Optional.of(amenityModel));
-        assertTrue(amenityService.amenityWithIdExists(1));
+        assertNotNull(amenityService.getById(1));
+    }
+
+    @Test
+    void testGetByIdNotFound() {
+        when(amenityRepository.findById(1)).thenReturn(Optional.empty());
+        assertThrows(NotFoundException.class, ()->amenityService.getById(1));
     }
 }

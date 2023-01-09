@@ -1,7 +1,5 @@
 package choice.university.ivan.soapapi.endpoint;
 
-import java.util.Optional;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ws.server.endpoint.annotation.Endpoint;
 import org.springframework.ws.server.endpoint.annotation.PayloadRoot;
@@ -26,12 +24,8 @@ import choice.university.ivan.schemas.RemoveAmenityHotelRequest;
 import choice.university.ivan.schemas.RemoveAmenityHotelResponse;
 import choice.university.ivan.schemas.UpdateHotelRequest;
 import choice.university.ivan.schemas.UpdateHotelResponse;
-import choice.university.ivan.soapapi.exception.BadRequestException;
-import choice.university.ivan.soapapi.exception.ConflictException;
-import choice.university.ivan.soapapi.exception.NotFoundException;
 import choice.university.ivan.soapapi.mapper.HotelMapper;
 import choice.university.ivan.soapapi.model.HotelModel;
-import choice.university.ivan.soapapi.service.AmenityService;
 import choice.university.ivan.soapapi.service.HotelService;
 
 @Endpoint
@@ -39,17 +33,12 @@ public class HotelEndpoints {
     private static final String NAMESPACE_URI = "http://localhost:8081/hotels";
     @Autowired
     private HotelService hotelService;
-    @Autowired
-    private AmenityService amenityService;
 
     @PayloadRoot(localPart = "getHotelByIdRequest", namespace = NAMESPACE_URI)
     @ResponsePayload
     public GetHotelByIdResponse getHotelById(@RequestPayload GetHotelByIdRequest request) {
         GetHotelByIdResponse response = new GetHotelByIdResponse();
-        Optional<HotelModel> optionalHotel = hotelService.getById(request.getId());
-        if (!optionalHotel.isPresent())
-            throw new NotFoundException("Hotel with id: " + request.getId() + " not found");
-        Hotel hotel = HotelMapper.mapHotel(optionalHotel.get());
+        Hotel hotel = HotelMapper.mapHotel(hotelService.getById(request.getId()));
         response.setHotel(hotel);
         return response;
     }
@@ -89,10 +78,7 @@ public class HotelEndpoints {
     public CreateHotelResponse processCreateHotelRequest(@RequestPayload CreateHotelRequest request) {
         CreateHotelResponse response = new CreateHotelResponse();
         HotelModel hotel = new HotelModel(null, request.getName(), request.getAddress(), request.getRating());
-        validateHotel(hotel);
         HotelModel hotelCreated = hotelService.createHotel(hotel);
-        if (hotelCreated == null)
-            throw new ConflictException("Exception while adding Hotel");
         response.setHotel(HotelMapper.mapHotel(hotelCreated));
         return response;
     }
@@ -101,14 +87,9 @@ public class HotelEndpoints {
     @ResponsePayload
     public UpdateHotelResponse processUpdateHotelRequest(@RequestPayload UpdateHotelRequest request) {
         UpdateHotelResponse response = new UpdateHotelResponse();
-        if (!hotelService.hotelWithIdExists(request.getId()))
-            throw new NotFoundException("Hotel with id: " + request.getId() + " not found");
         HotelModel hotel = new HotelModel(request.getId(), request.getName(), request.getAddress(),
                 request.getRating());
-        validateHotel(hotel);
         HotelModel hotelUpdated = hotelService.updateHotel(hotel);
-        if (hotelUpdated == null)
-            throw new ConflictException("Exception while updating Hotel");
         response.setHotel(HotelMapper.mapHotel(hotelUpdated));
         return response;
     }
@@ -117,11 +98,7 @@ public class HotelEndpoints {
     @ResponsePayload
     public DeleteHotelResponse processDeleteHotelRequest(@RequestPayload DeleteHotelRequest request) {
         DeleteHotelResponse response = new DeleteHotelResponse();
-        if (!hotelService.hotelWithIdExists(request.getId()))
-            throw new NotFoundException("Hotel with id: " + request.getId() + " not found");
         HotelModel hotelDeleted = hotelService.deleteHotel(request.getId());
-        if (hotelDeleted == null)
-            throw new ConflictException("Exception deleting updating Hotel");
         response.setHotel(HotelMapper.mapHotel(hotelDeleted));
         return response;
     }
@@ -130,13 +107,7 @@ public class HotelEndpoints {
     @ResponsePayload
     public AddAmenityHotelResponse processAddAmenityToHotelRequest(@RequestPayload AddAmenityHotelRequest request) {
         AddAmenityHotelResponse response = new AddAmenityHotelResponse();
-        if (!hotelService.hotelWithIdExists(request.getIdHotel()))
-            throw new NotFoundException("Hotel with id: " + request.getIdHotel() + " not found");
-        if (!amenityService.amenityWithIdExists(request.getIdAmenity()))
-            throw new NotFoundException("Amenity with id: " + request.getIdAmenity() + " not found");
         HotelModel hotelUpdated = hotelService.addAmenityToHotel(request.getIdHotel(), request.getIdAmenity());
-        if (hotelUpdated == null)
-            throw new ConflictException("Exception while adding Amenity to Hotel");
         response.setHotel(HotelMapper.mapHotel(hotelUpdated));
         return response;
     }
@@ -146,25 +117,9 @@ public class HotelEndpoints {
     public RemoveAmenityHotelResponse processRemoveAmenityFromHotelRequest(
             @RequestPayload RemoveAmenityHotelRequest request) {
         RemoveAmenityHotelResponse response = new RemoveAmenityHotelResponse();
-        if (!hotelService.hotelWithIdExists(request.getIdHotel()))
-            throw new NotFoundException("Hotel with id: " + request.getIdHotel() + " not found");
-        if (!amenityService.amenityWithIdExists(request.getIdAmenity()))
-            throw new NotFoundException("Amenity with id: " + request.getIdAmenity() + " not found");
         HotelModel hotelUpdated = hotelService.removeAmenityFromHotel(request.getIdHotel(), request.getIdAmenity());
-        if (hotelUpdated == null)
-            throw new ConflictException("Exception while removing Amenity from Hotel");
         response.setHotel(HotelMapper.mapHotel(hotelUpdated));
         return response;
     }
 
-    private void validateHotel(HotelModel hotel) {
-        if (hotel.getName() == null || hotel.getName().equals(""))
-            throw new BadRequestException("Name can't be empty");
-
-        if (hotel.getAddress() == null || hotel.getAddress().equals(""))
-            throw new BadRequestException("Address can't be empty");
-
-        if (hotel.getRating() < 0 || hotel.getRating() > 10)
-            throw new BadRequestException("Invalid rating. The rating must be a numeric value between 0 and 10");
-    }
 }

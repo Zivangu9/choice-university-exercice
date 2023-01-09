@@ -1,5 +1,7 @@
 package choice.university.ivan.soapapi.service;
 
+import choice.university.ivan.soapapi.model.AmenityModel;
+
 public interface AmenityService {
-    public Boolean amenityWithIdExists(int id);
+    public AmenityModel getById(int id);
 }

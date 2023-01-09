@@ -62,7 +62,7 @@ public class HotelEndpointsTest {
         GetHotelByIdRequest getHotelByIdRequest = new GetHotelByIdRequest();
         getHotelByIdRequest.setId(1);
         HotelModel hotelModel = new HotelModel(1, "Hotel Name", "Hotel Address", 7.8);
-        when(hotelService.getById(1)).thenReturn(Optional.of(hotelModel));
+        when(hotelService.getById(1)).thenReturn(hotelModel);
         GetHotelByIdResponse getHotelByIdResponse = hotelEndpoints.getHotelById(getHotelByIdRequest);
         assertEquals(getHotelByIdResponse.getHotel(), HotelMapper.mapHotel(hotelModel));
     }
@@ -71,7 +71,7 @@ public class HotelEndpointsTest {
     void testGetHotelByIdNotFound() {
         GetHotelByIdRequest getHotelByIdRequest = new GetHotelByIdRequest();
         getHotelByIdRequest.setId(1);
-        when(hotelService.getById(1)).thenReturn(Optional.empty());
+        when(hotelService.getById(1)).thenThrow(NotFoundException.class);
         assertThrows(NotFoundException.class, () -> hotelEndpoints.getHotelById(getHotelByIdRequest));
     }
 
@@ -117,6 +117,10 @@ public class HotelEndpointsTest {
         CreateHotelRequest createHotelRequest = new CreateHotelRequest();
         createHotelRequest.setAddress("Hotel Address");
         createHotelRequest.setRating(9.8);
+        HotelModel hotel = new HotelModel();
+        hotel.setAddress("Hotel Address");
+        hotel.setRating(9.8);
+        when(hotelService.createHotel(hotel)).thenThrow(BadRequestException.class);
         assertThrows(BadRequestException.class, () -> hotelEndpoints.processCreateHotelRequest(createHotelRequest));
     }
 
@@ -126,6 +130,11 @@ public class HotelEndpointsTest {
         createHotelRequest.setName("");
         createHotelRequest.setAddress("Hotel Address");
         createHotelRequest.setRating(9.8);
+        HotelModel hotel = new HotelModel();
+        hotel.setName("");
+        hotel.setAddress("Hotel Address");
+        hotel.setRating(9.8);
+        when(hotelService.createHotel(hotel)).thenThrow(BadRequestException.class);
         assertThrows(BadRequestException.class, () -> hotelEndpoints.processCreateHotelRequest(createHotelRequest));
     }
 
@@ -134,6 +143,10 @@ public class HotelEndpointsTest {
         CreateHotelRequest createHotelRequest = new CreateHotelRequest();
         createHotelRequest.setName("Hotel Name");
         createHotelRequest.setRating(9.8);
+        HotelModel hotel = new HotelModel();
+        hotel.setName("Hotel Name");
+        hotel.setRating(9.8);
+        when(hotelService.createHotel(hotel)).thenThrow(BadRequestException.class);
         assertThrows(BadRequestException.class, () -> hotelEndpoints.processCreateHotelRequest(createHotelRequest));
     }
 
@@ -143,6 +156,11 @@ public class HotelEndpointsTest {
         createHotelRequest.setName("Hotel Name");
         createHotelRequest.setAddress("");
         createHotelRequest.setRating(9.8);
+        HotelModel hotel = new HotelModel();
+        hotel.setName("Hotel Name");
+        hotel.setAddress("");
+        hotel.setRating(9.8);
+        when(hotelService.createHotel(hotel)).thenThrow(BadRequestException.class);
         assertThrows(BadRequestException.class, () -> hotelEndpoints.processCreateHotelRequest(createHotelRequest));
     }
 
@@ -152,6 +170,11 @@ public class HotelEndpointsTest {
         createHotelRequest.setName("Hotel Name");
         createHotelRequest.setAddress("Hotel Address");
         createHotelRequest.setRating(-1);
+        HotelModel hotel = new HotelModel();
+        hotel.setName("Hotel Name");
+        hotel.setAddress("Hotel Address");
+        hotel.setRating(-1);
+        when(hotelService.createHotel(hotel)).thenThrow(BadRequestException.class);
         assertThrows(BadRequestException.class, () -> hotelEndpoints.processCreateHotelRequest(createHotelRequest));
     }
 
@@ -161,6 +184,11 @@ public class HotelEndpointsTest {
         createHotelRequest.setName("Hotel Name");
         createHotelRequest.setAddress("Hotel Address");
         createHotelRequest.setRating(11);
+        HotelModel hotel = new HotelModel();
+        hotel.setName("Hotel Name");
+        hotel.setAddress("Hotel Address");
+        hotel.setRating(11);
+        when(hotelService.createHotel(hotel)).thenThrow(BadRequestException.class);
         assertThrows(BadRequestException.class, () -> hotelEndpoints.processCreateHotelRequest(createHotelRequest));
     }
 
@@ -171,7 +199,7 @@ public class HotelEndpointsTest {
         createHotelRequest.setAddress("Hotel Address");
         createHotelRequest.setRating(9.8);
         HotelModel hotelModelToCreate = new HotelModel(null, "Hotel Name", "Hotel Address", 9.8);
-        when(hotelService.createHotel(hotelModelToCreate)).thenReturn(null);
+        when(hotelService.createHotel(hotelModelToCreate)).thenThrow(ConflictException.class);
         assertThrows(ConflictException.class, () -> hotelEndpoints.processCreateHotelRequest(createHotelRequest));
     }
 
@@ -184,7 +212,7 @@ public class HotelEndpointsTest {
         updateHotelRequest.setRating(9.8);
         HotelModel hotelModelToUpdate = new HotelModel(1, "Hotel Name", "Hotel Address", 9.8);
         HotelModel hotelModelUpdated = new HotelModel(1, "Hotel Name", "Hotel Address", 9.8);
-        when(hotelService.hotelWithIdExists(1)).thenReturn(true);
+        when(hotelService.getById(1)).thenReturn(hotelModelToUpdate);
         when(hotelService.updateHotel(hotelModelToUpdate)).thenReturn(hotelModelUpdated);
         UpdateHotelResponse updateHotelResponse = hotelEndpoints
                 .processUpdateHotelRequest(updateHotelRequest);
@@ -192,56 +220,15 @@ public class HotelEndpointsTest {
     }
 
     @Test
-    void testProcessUpdateHotelRequestNotFound() {
-        UpdateHotelRequest updateHotelRequest = new UpdateHotelRequest();
-        updateHotelRequest.setId(1);
-        updateHotelRequest.setName("Hotel Name");
-        updateHotelRequest.setAddress("Hotel Address");
-        updateHotelRequest.setRating(9.8);
-        when(hotelService.hotelWithIdExists(1)).thenReturn(false);
-        assertThrows(NotFoundException.class, () -> hotelEndpoints.processUpdateHotelRequest(updateHotelRequest));
-    }
-
-    @Test
-    void testProcessUpdateHotelRequestConflict() {
-        UpdateHotelRequest updateHotelRequest = new UpdateHotelRequest();
-        updateHotelRequest.setId(1);
-        updateHotelRequest.setName("Hotel Name");
-        updateHotelRequest.setAddress("Hotel Address");
-        updateHotelRequest.setRating(9.8);
-        HotelModel hotelModelToUpdate = new HotelModel(1, "Hotel Name", "Hotel Address", 9.8);
-        when(hotelService.hotelWithIdExists(1)).thenReturn(true);
-        when(hotelService.updateHotel(hotelModelToUpdate)).thenReturn(null);
-        assertThrows(ConflictException.class, () -> hotelEndpoints.processUpdateHotelRequest(updateHotelRequest));
-    }
-
-    @Test
     void testProcessDeleteHotelRequest() {
         DeleteHotelRequest deleteHotelRequest = new DeleteHotelRequest();
         deleteHotelRequest.setId(1);
         HotelModel hotelModelDeleted = new HotelModel(1, "Hotel Name", "Hotel Address", 9.8);
-        when(hotelService.hotelWithIdExists(1)).thenReturn(true);
+        when(hotelService.getById(1)).thenReturn(hotelModelDeleted);
         when(hotelService.deleteHotel(1)).thenReturn(hotelModelDeleted);
         DeleteHotelResponse updateHotelResponse = hotelEndpoints
                 .processDeleteHotelRequest(deleteHotelRequest);
         assertEquals(updateHotelResponse.getHotel(), HotelMapper.mapHotel(hotelModelDeleted));
-    }
-
-    @Test
-    void testProcessDeleteHotelRequestNotFound() {
-        DeleteHotelRequest deleteHotelRequest = new DeleteHotelRequest();
-        deleteHotelRequest.setId(1);
-        when(hotelService.hotelWithIdExists(1)).thenReturn(false);
-        assertThrows(NotFoundException.class, () -> hotelEndpoints.processDeleteHotelRequest(deleteHotelRequest));
-    }
-
-    @Test
-    void testProcessDeleteHotelRequestConflict() {
-        DeleteHotelRequest deleteHotelRequest = new DeleteHotelRequest();
-        deleteHotelRequest.setId(1);
-        when(hotelService.hotelWithIdExists(1)).thenReturn(true);
-        when(hotelService.deleteHotel(1)).thenReturn(null);
-        assertThrows(ConflictException.class, () -> hotelEndpoints.processDeleteHotelRequest(deleteHotelRequest));
     }
 
     @Test
@@ -250,47 +237,14 @@ public class HotelEndpointsTest {
         addAmenityHotelRequest.setIdHotel(1);
         addAmenityHotelRequest.setIdAmenity(1);
         HotelModel hotelModelUpdated = new HotelModel(1, "Hotel Name", "Hotel Address", 9.8);
-        hotelModelUpdated.getAmenities().add(new AmenityModel(1, "Wifi"));
-        when(hotelService.hotelWithIdExists(1)).thenReturn(true);
-        when(amenityService.amenityWithIdExists(1)).thenReturn(true);
+        AmenityModel amenityModelToAdd = new AmenityModel(1, "Wifi");
+        hotelModelUpdated.getAmenities().add(amenityModelToAdd);
+        when(hotelService.getById(1)).thenReturn(hotelModelUpdated);
+        when(amenityService.getById(1)).thenReturn(amenityModelToAdd);
         when(hotelService.addAmenityToHotel(1, 1)).thenReturn(hotelModelUpdated);
         AddAmenityHotelResponse addAmenityHotelResponse = hotelEndpoints
                 .processAddAmenityToHotelRequest(addAmenityHotelRequest);
         assertEquals(addAmenityHotelResponse.getHotel(), HotelMapper.mapHotel(hotelModelUpdated));
-    }
-
-    @Test
-    void testProcessAddAmenityToHotelRequestHotelNotFound() {
-        AddAmenityHotelRequest addAmenityHotelRequest = new AddAmenityHotelRequest();
-        addAmenityHotelRequest.setIdHotel(1);
-        addAmenityHotelRequest.setIdAmenity(1);
-        when(hotelService.hotelWithIdExists(1)).thenReturn(false);
-        when(amenityService.amenityWithIdExists(1)).thenReturn(true);
-        assertThrows(NotFoundException.class,
-                () -> hotelEndpoints.processAddAmenityToHotelRequest(addAmenityHotelRequest));
-    }
-
-    @Test
-    void testProcessAddAmenityToHotelRequestAmenityNotFound() {
-        AddAmenityHotelRequest addAmenityHotelRequest = new AddAmenityHotelRequest();
-        addAmenityHotelRequest.setIdHotel(1);
-        addAmenityHotelRequest.setIdAmenity(1);
-        when(hotelService.hotelWithIdExists(1)).thenReturn(true);
-        when(amenityService.amenityWithIdExists(1)).thenReturn(false);
-        assertThrows(NotFoundException.class,
-                () -> hotelEndpoints.processAddAmenityToHotelRequest(addAmenityHotelRequest));
-    }
-
-    @Test
-    void testProcessAddAmenityToHotelRequestConflict() {
-        AddAmenityHotelRequest addAmenityHotelRequest = new AddAmenityHotelRequest();
-        addAmenityHotelRequest.setIdHotel(1);
-        addAmenityHotelRequest.setIdAmenity(1);
-        when(hotelService.hotelWithIdExists(1)).thenReturn(true);
-        when(amenityService.amenityWithIdExists(1)).thenReturn(true);
-        when(hotelService.addAmenityToHotel(1, 1)).thenReturn(null);
-        assertThrows(ConflictException.class,
-                () -> hotelEndpoints.processAddAmenityToHotelRequest(addAmenityHotelRequest));
     }
 
     @Test
@@ -299,53 +253,14 @@ public class HotelEndpointsTest {
         removeAmenityHotelRequest.setIdHotel(1);
         removeAmenityHotelRequest.setIdAmenity(1);
         HotelModel hotelModelUpdated = new HotelModel(1, "Hotel Name", "Hotel Address", 9.8);
-        hotelModelUpdated.getAmenities().add(new AmenityModel(2, "Internet"));
-        when(hotelService.hotelWithIdExists(1)).thenReturn(true);
-        when(amenityService.amenityWithIdExists(1)).thenReturn(true);
+        AmenityModel amenityModelToRemove = new AmenityModel(2, "Internet");
+        hotelModelUpdated.getAmenities().add(amenityModelToRemove);
+        when(hotelService.getById(1)).thenReturn(hotelModelUpdated);
+        when(amenityService.getById(1)).thenReturn(amenityModelToRemove);
         when(hotelService.removeAmenityFromHotel(1, 1)).thenReturn(hotelModelUpdated);
         RemoveAmenityHotelResponse removeAmenityHotelResponse = hotelEndpoints
                 .processRemoveAmenityFromHotelRequest(removeAmenityHotelRequest);
         assertEquals(removeAmenityHotelResponse.getHotel(), HotelMapper.mapHotel(hotelModelUpdated));
-    }
-
-    @Test
-    void testProcessRemoveAmenityFromHotelRequestHotelNotFound() {
-        RemoveAmenityHotelRequest removeAmenityHotelRequest = new RemoveAmenityHotelRequest();
-        removeAmenityHotelRequest.setIdHotel(1);
-        removeAmenityHotelRequest.setIdAmenity(1);
-        HotelModel hotelModelUpdated = new HotelModel(1, "Hotel Name", "Hotel Address", 9.8);
-        hotelModelUpdated.getAmenities().add(new AmenityModel(2, "Internet"));
-        when(hotelService.hotelWithIdExists(1)).thenReturn(false);
-        when(amenityService.amenityWithIdExists(1)).thenReturn(true);
-        when(hotelService.removeAmenityFromHotel(1, 1)).thenReturn(hotelModelUpdated);
-        assertThrows(NotFoundException.class,
-                () -> hotelEndpoints.processRemoveAmenityFromHotelRequest(removeAmenityHotelRequest));
-    }
-
-    @Test
-    void testProcessRemoveAmenityFromHotelRequestAmenityNotFound() {
-        RemoveAmenityHotelRequest removeAmenityHotelRequest = new RemoveAmenityHotelRequest();
-        removeAmenityHotelRequest.setIdHotel(1);
-        removeAmenityHotelRequest.setIdAmenity(1);
-        HotelModel hotelModelUpdated = new HotelModel(1, "Hotel Name", "Hotel Address", 9.8);
-        hotelModelUpdated.getAmenities().add(new AmenityModel(2, "Internet"));
-        when(hotelService.hotelWithIdExists(1)).thenReturn(true);
-        when(amenityService.amenityWithIdExists(1)).thenReturn(false);
-        when(hotelService.removeAmenityFromHotel(1, 1)).thenReturn(hotelModelUpdated);
-        assertThrows(NotFoundException.class,
-                () -> hotelEndpoints.processRemoveAmenityFromHotelRequest(removeAmenityHotelRequest));
-    }
-
-    @Test
-    void testProcessRemoveAmenityFromHotelRequestConflict() {
-        RemoveAmenityHotelRequest removeAmenityHotelRequest = new RemoveAmenityHotelRequest();
-        removeAmenityHotelRequest.setIdHotel(1);
-        removeAmenityHotelRequest.setIdAmenity(1);
-        when(hotelService.hotelWithIdExists(1)).thenReturn(true);
-        when(amenityService.amenityWithIdExists(1)).thenReturn(true);
-        when(hotelService.removeAmenityFromHotel(1, 1)).thenReturn(null);
-        assertThrows(ConflictException.class,
-                () -> hotelEndpoints.processRemoveAmenityFromHotelRequest(removeAmenityHotelRequest));
     }
 
 }

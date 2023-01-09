@@ -9,9 +9,11 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
+import choice.university.ivan.soapapi.exception.BadRequestException;
+import choice.university.ivan.soapapi.exception.ConflictException;
+import choice.university.ivan.soapapi.exception.NotFoundException;
 import choice.university.ivan.soapapi.model.AmenityModel;
 import choice.university.ivan.soapapi.model.HotelModel;
-import choice.university.ivan.soapapi.repository.AmenityRepository;
 import choice.university.ivan.soapapi.repository.HotelRepository;
 
 @Service
@@ -19,14 +21,13 @@ public class HotelServiceImpl implements HotelService {
     @Autowired
     private HotelRepository hotelRepository;
     @Autowired
-    private AmenityRepository amenityRepository;
+    private AmenityService amenityService;
 
-    public Optional<HotelModel> getById(int id) {
-        return hotelRepository.findById(id);
-    }
-
-    public Boolean hotelWithIdExists(int id) {
-        return hotelRepository.findById(id).isPresent();
+    public HotelModel getById(int id) {
+        Optional<HotelModel> optional = hotelRepository.findById(id);
+        if (!optional.isPresent())
+            throw new NotFoundException("Hotel with id: " + id + " not found");
+        return optional.get();
     }
 
     public Page<HotelModel> filterHotels(String name, int page, int size) {
@@ -34,67 +35,82 @@ public class HotelServiceImpl implements HotelService {
     }
 
     public HotelModel createHotel(HotelModel hotel) {
-        HotelModel hotelCreated = null;
+        validateHotel(hotel);
         try {
-            hotelCreated = hotelRepository.save(hotel);
+            HotelModel hotelCreated = hotelRepository.save(hotel);
+            return hotelCreated;
         } catch (DataIntegrityViolationException e) {
-            return null;
+            throw new ConflictException("Exception while adding Hotel");
         }
-        return hotelCreated;
     }
 
     public HotelModel updateHotel(HotelModel hotel) {
-        Optional<HotelModel> hotelToUpdate = getById(hotel.getId());
-        if (hotelToUpdate.isPresent()) {
-            HotelModel hotelUpdated = hotelToUpdate.get();
-            hotelUpdated.setName(hotel.getName());
-            hotelUpdated.setAddress(hotel.getAddress());
-            hotelUpdated.setRating(hotel.getRating());
-            return hotelRepository.save(hotelUpdated);
+        validateHotel(hotel);
+        HotelModel hotelToUpdate = getById(hotel.getId());
+        hotelToUpdate.setName(hotel.getName());
+        hotelToUpdate.setAddress(hotel.getAddress());
+        hotelToUpdate.setRating(hotel.getRating());
+        try {
+            HotelModel hotelUpdated = hotelRepository.save(hotel);
+            return hotelUpdated;
+        } catch (Exception e) {
+            throw new ConflictException("Exception while updating Hotel");
         }
-        return null;
     }
 
     public HotelModel deleteHotel(int id) {
-        Optional<HotelModel> hotelToDelete = getById(id);
-        if (hotelToDelete.isPresent()) {
+        HotelModel hotelToDelete = getById(id);
+        try {
             hotelRepository.deleteById(id);
-            return hotelToDelete.get();
+            return hotelToDelete;
+        } catch (Exception e) {
+            throw new ConflictException("Exception while deleting Hotel");
         }
-        return null;
     }
 
     public HotelModel addAmenityToHotel(int idHotel, int idAmenity) {
-        Optional<HotelModel> hotelToUpdate = getById(idHotel);
-        Optional<AmenityModel> amenityToAdd = amenityRepository.findById(idAmenity);
-        if (hotelToUpdate.isPresent() && amenityToAdd.isPresent()) {
-            HotelModel hotelUpdated = hotelToUpdate.get();
-            AmenityModel amenity = amenityToAdd.get();
-            List<AmenityModel> amenities = hotelUpdated.getAmenities();
-            boolean isAmenityInList = false;
-            for (AmenityModel amenityModel : amenities)
-                if (amenityModel.getId() == idAmenity)
-                    isAmenityInList = true;
-            if (!isAmenityInList) {
-                amenities.add(amenity);
-            }
-            return hotelRepository.save(hotelUpdated);
+        HotelModel hotelToUpdate = getById(idHotel);
+        AmenityModel amenityToAdd = amenityService.getById(idAmenity);
+        List<AmenityModel> amenities = hotelToUpdate.getAmenities();
+        boolean isAmenityInList = false;
+        for (AmenityModel amenityModel : amenities)
+            if (amenityModel.getId() == idAmenity)
+                isAmenityInList = true;
+        if (!isAmenityInList) {
+            amenities.add(amenityToAdd);
         }
-        return null;
+        try {
+            HotelModel hotelUpdated = hotelRepository.save(hotelToUpdate);
+            return hotelUpdated;
+        } catch (Exception e) {
+            throw new ConflictException("Exception while adding Amenity to Hotel");
+        }
     }
 
     public HotelModel removeAmenityFromHotel(int idHotel, int idAmenity) {
-        Optional<HotelModel> hotelToUpdate = getById(idHotel);
-        if (hotelToUpdate.isPresent()) {
-            HotelModel hotelUpdated = hotelToUpdate.get();
-            List<AmenityModel> amenities = hotelUpdated.getAmenities();
-            AmenityModel amenityToRemove = null;
-            for (AmenityModel amenityModel : amenities)
-                if (amenityModel.getId() == idAmenity)
-                    amenityToRemove = amenityModel;
-            amenities.remove(amenityToRemove);
-            return hotelRepository.save(hotelUpdated);
+        HotelModel hotelToUpdate = getById(idHotel);
+        List<AmenityModel> amenities = hotelToUpdate.getAmenities();
+        AmenityModel amenityToRemove = null;
+        for (AmenityModel amenityModel : amenities)
+            if (amenityModel.getId() == idAmenity)
+                amenityToRemove = amenityModel;
+        amenities.remove(amenityToRemove);
+        try {
+            HotelModel hotelUpdated = hotelRepository.save(hotelToUpdate);
+            return hotelUpdated;
+        } catch (Exception e) {
+            throw new ConflictException("Exception while removing Amenity from Hotel");
         }
-        return null;
+    }
+
+    public void validateHotel(HotelModel hotel) {
+        if (hotel.getName() == null || hotel.getName().equals(""))
+            throw new BadRequestException("Name can't be empty");
+
+        if (hotel.getAddress() == null || hotel.getAddress().equals(""))
+            throw new BadRequestException("Address can't be empty");
+
+        if (hotel.getRating() < 0 || hotel.getRating() > 10)
+            throw new BadRequestException("Invalid rating. The rating must be a numeric value between 0 and 10");
     }
 }
