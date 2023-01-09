@@ -1,5 +1,6 @@
 package choice.university.ivan.model;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class HotelModel {
@@ -12,10 +13,12 @@ public class HotelModel {
     public HotelModel() {
     }
 
-    public HotelModel(int id, String name, String address) {
+    public HotelModel(int id, String name, String address, double rating) {
         this.id = id;
         this.name = name;
         this.address = address;
+        this.rating = rating;
+        this.amenities = new ArrayList<>();
     }
 
     public int getId() {

@@ -9,7 +9,7 @@ import org.springframework.oxm.jaxb.Jaxb2Marshaller;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import choice.university.ivan.service.HotelService;
+import choice.university.ivan.client.HotelClient;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = AppConfig.class)
@@ -17,12 +17,12 @@ public class AppConfigTest {
     @Autowired
     Jaxb2Marshaller marshaller;
     @Autowired
-    HotelService hotelService;
+    HotelClient hotelClient;
 
     @Test
     public void testContextLoad() {
         assertNotNull(marshaller);
-        assertNotNull(hotelService);
+        assertNotNull(hotelClient);
     }
 
 }

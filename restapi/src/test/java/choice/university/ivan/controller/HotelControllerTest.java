@@ -15,21 +15,12 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.ContextConfiguration;
 
-import choice.university.ivan.mapper.HotelMapper;
 import choice.university.ivan.model.AmenityModel;
 import choice.university.ivan.model.HotelModel;
-import choice.university.ivan.schemas.AddAmenityHotelResponse;
-import choice.university.ivan.schemas.Amenity;
-import choice.university.ivan.schemas.CreateHotelResponse;
-import choice.university.ivan.schemas.DeleteHotelResponse;
 import choice.university.ivan.schemas.FilterHotelsResponse;
-import choice.university.ivan.schemas.GetHotelByIdResponse;
 import choice.university.ivan.schemas.Hotel;
 import choice.university.ivan.schemas.Page;
-import choice.university.ivan.schemas.RemoveAmenityHotelResponse;
-import choice.university.ivan.schemas.ServiceStatus;
-import choice.university.ivan.schemas.UpdateHotelResponse;
-import choice.university.ivan.service.HotelService;
+import choice.university.ivan.service.HotelServiceImpl;
 
 @RunWith(org.mockito.junit.MockitoJUnitRunner.class)
 @ContextConfiguration(locations = { "/test-config.xml" })
@@ -38,7 +29,7 @@ public class HotelControllerTest {
     private HotelController hotelController;
 
     @Mock
-    private HotelService hotelService;
+    private HotelServiceImpl hotelService;
 
     @Test
     public void testContextLoads() {
@@ -80,335 +71,88 @@ public class HotelControllerTest {
 
     @Test
     public void testGetHotelByID() {
-        GetHotelByIdResponse getHotelByIdResponse = new GetHotelByIdResponse();
-
-        Hotel hotel = new Hotel();
-        hotel.setId(1);
-        hotel.setAddress("Address");
-        hotel.setName("Hotel Name");
-        hotel.setRating(8.4);
-        getHotelByIdResponse.setHotel(hotel);
-        ServiceStatus serviceStatus = new ServiceStatus();
-        serviceStatus.setStatusCode(200);
-        getHotelByIdResponse.setServiceStatus(serviceStatus);
-        when(hotelService.getHotelById(1)).thenReturn(getHotelByIdResponse);
-        HotelModel hotelModel = HotelMapper.getHotelModel(hotel);
+        HotelModel hotel = new HotelModel(1, "Address", "Hotel Name", 8.4);
+        when(hotelService.getHotelById(1)).thenReturn(hotel);
 
         ResponseEntity<HotelModel> responseEntity = hotelController.getHotelByID(1);
         assertEquals(responseEntity.getStatusCode(), HttpStatus.FOUND);
-        assertEquals(responseEntity.getBody(), hotelModel);
-    }
-
-    @Test
-    public void testGetHotelNotFoundByID() {
-        GetHotelByIdResponse getHotelByIdResponse = new GetHotelByIdResponse();
-        ServiceStatus serviceStatus = new ServiceStatus();
-        serviceStatus.setStatusCode(404);
-        getHotelByIdResponse.setServiceStatus(serviceStatus);
-
-        when(hotelService.getHotelById(1)).thenReturn(getHotelByIdResponse);
-
-        ResponseEntity<HotelModel> responseEntity = hotelController.getHotelByID(1);
-        assertEquals(responseEntity.getStatusCode(), HttpStatus.NOT_FOUND);
+        assertEquals(responseEntity.getBody(), hotel);
     }
 
     @Test
     public void testCreateHotel() {
-        CreateHotelResponse createHotelResponse = new CreateHotelResponse();
-        HotelModel hotelToCreate = new HotelModel();
-        hotelToCreate.setName("Hotel Created");
-        hotelToCreate.setAddress("Address");
-        hotelToCreate.setRating(7.8);
-        Hotel hotel = new Hotel();
-        hotel.setId(1);
-        hotel.setName("Hotel Created");
-        hotel.setAddress("Address");
-        hotel.setRating(7.8);
-        createHotelResponse.setHotel(hotel);
-        ServiceStatus serviceStatus = new ServiceStatus();
-        serviceStatus.setStatusCode(201);
-        createHotelResponse.setServiceStatus(serviceStatus);
-
-        when(hotelService.createHotel(hotelToCreate)).thenReturn(createHotelResponse);
+        HotelModel hotelToCreate = new HotelModel(0, "Hotel Created", "Address", 7.8);
+        HotelModel hotelCreated = new HotelModel(1, "Hotel Created", "Address", 7.8);
+        when(hotelService.createHotel(hotelToCreate)).thenReturn(hotelCreated);
 
         ResponseEntity<HotelModel> responseEntity = hotelController.createHotel(hotelToCreate);
-        HotelModel hotelModel = HotelMapper.getHotelModel(hotel);
         assertEquals(responseEntity.getStatusCode(), HttpStatus.CREATED);
-        assertEquals(responseEntity.getBody(), hotelModel);
-    }
-
-    @Test
-    public void testCreateHotelConflict() {
-        CreateHotelResponse createHotelResponse = new CreateHotelResponse();
-        HotelModel hotelToCreate = new HotelModel();
-        hotelToCreate.setName("Hotel Created");
-        hotelToCreate.setAddress("Address");
-        hotelToCreate.setRating(7.8);
-        ServiceStatus serviceStatus = new ServiceStatus();
-        serviceStatus.setStatusCode(409);
-        createHotelResponse.setServiceStatus(serviceStatus);
-
-        when(hotelService.createHotel(hotelToCreate)).thenReturn(createHotelResponse);
-
-        ResponseEntity<HotelModel> responseEntity = hotelController.createHotel(hotelToCreate);
-        assertEquals(responseEntity.getStatusCode(), HttpStatus.CONFLICT);
+        assertEquals(responseEntity.getBody(), hotelCreated);
     }
 
     @Test
     public void testUpdateHotel() {
-        UpdateHotelResponse updateHotelResponse = new UpdateHotelResponse();
-        HotelModel hotelToUpdate = new HotelModel();
-        hotelToUpdate.setId(1);
-        hotelToUpdate.setName("Hotel Created");
-        hotelToUpdate.setAddress("Address");
-        hotelToUpdate.setRating(7.8);
-        Hotel hotel = new Hotel();
-        hotel.setId(1);
-        hotel.setName("Hotel Created");
-        hotel.setAddress("Address");
-        hotel.setRating(7.8);
-        updateHotelResponse.setHotel(hotel);
-        ServiceStatus serviceStatus = new ServiceStatus();
-        serviceStatus.setStatusCode(200);
-        updateHotelResponse.setServiceStatus(serviceStatus);
-
-        when(hotelService.updateHotel(hotelToUpdate)).thenReturn(updateHotelResponse);
+        HotelModel hotelToUpdate = new HotelModel(1, "Hotel Created", "Address", 7.8);
+        when(hotelService.updateHotel(hotelToUpdate)).thenReturn(hotelToUpdate);
 
         ResponseEntity<HotelModel> responseEntity = hotelController.updateHotel(1, hotelToUpdate);
-        HotelModel hotelModel = HotelMapper.getHotelModel(hotel);
         assertEquals(responseEntity.getStatusCode(), HttpStatus.OK);
-        assertEquals(responseEntity.getBody(), hotelModel);
-    }
-
-    @Test
-    public void testUpdateHotelConflict() {
-        UpdateHotelResponse updateHotelResponse = new UpdateHotelResponse();
-        HotelModel hotelToUpdate = new HotelModel();
-        hotelToUpdate.setName("Hotel Created");
-        hotelToUpdate.setAddress("Address");
-        hotelToUpdate.setRating(7.8);
-        ServiceStatus serviceStatus = new ServiceStatus();
-        serviceStatus.setStatusCode(409);
-        updateHotelResponse.setServiceStatus(serviceStatus);
-
-        when(hotelService.updateHotel(hotelToUpdate)).thenReturn(updateHotelResponse);
-
-        ResponseEntity<HotelModel> responseEntity = hotelController.updateHotel(1, hotelToUpdate);
-        assertEquals(responseEntity.getStatusCode(), HttpStatus.CONFLICT);
-    }
-
-    @Test
-    public void testUpdateHotelNotFound() {
-        UpdateHotelResponse updateHotelResponse = new UpdateHotelResponse();
-        HotelModel hotelToUpdate = new HotelModel();
-        hotelToUpdate.setName("Hotel Created");
-        hotelToUpdate.setAddress("Address");
-        hotelToUpdate.setRating(7.8);
-        ServiceStatus serviceStatus = new ServiceStatus();
-        serviceStatus.setStatusCode(404);
-        updateHotelResponse.setServiceStatus(serviceStatus);
-
-        when(hotelService.updateHotel(hotelToUpdate)).thenReturn(updateHotelResponse);
-
-        ResponseEntity<HotelModel> responseEntity = hotelController.updateHotel(1, hotelToUpdate);
-        assertEquals(responseEntity.getStatusCode(), HttpStatus.NOT_FOUND);
+        assertEquals(responseEntity.getBody(), hotelToUpdate);
     }
 
     @Test
     public void testDeleteHotelByID() {
-        DeleteHotelResponse deleteHotelResponse = new DeleteHotelResponse();
-        Hotel hotel = new Hotel();
-        hotel.setId(1);
-        hotel.setName("Hotel Deleted");
-        hotel.setAddress("Address");
-        hotel.setRating(7.8);
-        deleteHotelResponse.setHotel(hotel);
-        ServiceStatus serviceStatus = new ServiceStatus();
-        serviceStatus.setStatusCode(200);
-        deleteHotelResponse.setServiceStatus(serviceStatus);
-
-        when(hotelService.deleteHotel(1)).thenReturn(deleteHotelResponse);
+        HotelModel hotelDeleted = new HotelModel(1, "Hotel Deleted", "Address", 7.8);
+        when(hotelService.deleteHotel(1)).thenReturn(hotelDeleted);
 
         ResponseEntity<HotelModel> responseEntity = hotelController.deleteHotelByID(1);
-        HotelModel hotelModel = HotelMapper.getHotelModel(hotel);
         assertEquals(responseEntity.getStatusCode(), HttpStatus.OK);
-        assertEquals(responseEntity.getBody(), hotelModel);
-    }
-
-    @Test
-    public void testDeleteHotelConflict() {
-        DeleteHotelResponse deleteHotelResponse = new DeleteHotelResponse();
-        ServiceStatus serviceStatus = new ServiceStatus();
-        serviceStatus.setStatusCode(409);
-        deleteHotelResponse.setServiceStatus(serviceStatus);
-
-        when(hotelService.deleteHotel(1)).thenReturn(deleteHotelResponse);
-
-        ResponseEntity<HotelModel> responseEntity = hotelController.deleteHotelByID(1);
-        assertEquals(responseEntity.getStatusCode(), HttpStatus.CONFLICT);
-    }
-
-    @Test
-    public void testDeleteHotelNotFound() {
-        DeleteHotelResponse deleteHotelResponse = new DeleteHotelResponse();
-        ServiceStatus serviceStatus = new ServiceStatus();
-        serviceStatus.setStatusCode(404);
-        deleteHotelResponse.setServiceStatus(serviceStatus);
-
-        when(hotelService.deleteHotel(1)).thenReturn(deleteHotelResponse);
-
-        ResponseEntity<HotelModel> responseEntity = hotelController.deleteHotelByID(1);
-        assertEquals(responseEntity.getStatusCode(), HttpStatus.NOT_FOUND);
+        assertEquals(responseEntity.getBody(), hotelDeleted);
     }
 
     @Test
     public void testGetHotelAmenities() {
-        GetHotelByIdResponse getHotelByIdResponse = new GetHotelByIdResponse();
-        Hotel hotel = new Hotel();
-        hotel.setId(1);
-        hotel.setName("Hotel Name");
-        hotel.setAddress("Hotel Address");
-        hotel.setRating(8.9);
-        List<Amenity> amenities = hotel.getAmenities();
-        Amenity amenity1 = new Amenity();
-        amenity1.setId(1);
-        amenity1.setName("Intenet");
-        Amenity amenity2 = new Amenity();
-        amenity2.setId(2);
-        amenity2.setName("WiFi");
+        HotelModel hotelModel = new HotelModel(1, "Hotel Name", "Hotel Address", 8.9);
+        List<AmenityModel> amenities = new ArrayList<>();
+        AmenityModel amenity1 = new AmenityModel(1, "Intenet");
+        AmenityModel amenity2 = new AmenityModel(2, "WiFi");
         amenities.add(amenity1);
         amenities.add(amenity2);
-        getHotelByIdResponse.setHotel(hotel);
-        ServiceStatus serviceStatus = new ServiceStatus();
-        serviceStatus.setStatusCode(200);
-        getHotelByIdResponse.setServiceStatus(serviceStatus);
-        when(hotelService.getHotelById(1)).thenReturn(getHotelByIdResponse);
+        hotelModel.setAmenities(amenities);
+        when(hotelService.getHotelById(1)).thenReturn(hotelModel);
 
         ResponseEntity<List<AmenityModel>> responseEntity = hotelController.getHotelAmenities(1);
         assertEquals(responseEntity.getStatusCode(), HttpStatus.FOUND);
-        assertEquals(responseEntity.getBody(), HotelMapper.getAmenities(amenities));
-    }
-
-    @Test
-    public void testGetHotelAmenitiesNotFound() {
-        GetHotelByIdResponse getHotelByIdResponse = new GetHotelByIdResponse();
-        ServiceStatus serviceStatus = new ServiceStatus();
-        serviceStatus.setStatusCode(404);
-        getHotelByIdResponse.setServiceStatus(serviceStatus);
-        when(hotelService.getHotelById(1)).thenReturn(getHotelByIdResponse);
-
-        ResponseEntity<List<AmenityModel>> responseEntity = hotelController.getHotelAmenities(1);
-        assertEquals(responseEntity.getStatusCode(), HttpStatus.NOT_FOUND);
+        assertEquals(responseEntity.getBody(), amenities);
     }
 
     @Test
     public void testAddHotelAmenityByIds() {
-        AddAmenityHotelResponse addAmenityHotelResponse = new AddAmenityHotelResponse();
-        Hotel hotel = new Hotel();
-        hotel.setId(1);
-        hotel.setName("Hotel Updated");
-        hotel.setAddress("Address");
-        hotel.setRating(7.9);
-        Amenity amenity1 = new Amenity();
-        amenity1.setId(1);
-        amenity1.setName("Wifi");
-        Amenity amenity2 = new Amenity();
-        amenity2.setId(2);
-        amenity2.setName("Pool");
-        hotel.getAmenities().add(amenity1);
-        hotel.getAmenities().add(amenity2);
-        addAmenityHotelResponse.setHotel(hotel);
-
-        ServiceStatus serviceStatus = new ServiceStatus();
-        serviceStatus.setStatusCode(201);
-        addAmenityHotelResponse.setServiceStatus(serviceStatus);
-
-        when(hotelService.addAmenityToHotelByIds(1, 1)).thenReturn(addAmenityHotelResponse);
+        AmenityModel amenity1 = new AmenityModel(1, "Wifi");
+        AmenityModel amenity2 = new AmenityModel(2, "Pool");
+        List<AmenityModel> amenityModels = new ArrayList<>();
+        amenityModels.add(amenity1);
+        amenityModels.add(amenity2);
+        when(hotelService.addAmenityToHotelByIds(1, 1)).thenReturn(amenityModels);
 
         ResponseEntity<List<AmenityModel>> responseEntity = hotelController.addHotelAmenityByIds(1, 1);
         assertEquals(responseEntity.getStatusCode(), HttpStatus.OK);
-        assertEquals(responseEntity.getBody(), HotelMapper.getAmenities(hotel.getAmenities()));
-    }
-
-    @Test
-    public void testAddHotelAmenityByIdsNotFound() {
-        AddAmenityHotelResponse addAmenityHotelResponse = new AddAmenityHotelResponse();
-        ServiceStatus serviceStatus = new ServiceStatus();
-        serviceStatus.setStatusCode(404);
-        addAmenityHotelResponse.setServiceStatus(serviceStatus);
-
-        when(hotelService.addAmenityToHotelByIds(1, 1)).thenReturn(addAmenityHotelResponse);
-
-        ResponseEntity<List<AmenityModel>> responseEntity = hotelController.addHotelAmenityByIds(1, 1);
-        assertEquals(responseEntity.getStatusCode(), HttpStatus.NOT_FOUND);
-    }
-
-    @Test
-    public void testAddHotelAmenityByIdsConfict() {
-        AddAmenityHotelResponse addAmenityHotelResponse = new AddAmenityHotelResponse();
-        ServiceStatus serviceStatus = new ServiceStatus();
-        serviceStatus.setStatusCode(409);
-        addAmenityHotelResponse.setServiceStatus(serviceStatus);
-
-        when(hotelService.addAmenityToHotelByIds(1, 1)).thenReturn(addAmenityHotelResponse);
-
-        ResponseEntity<List<AmenityModel>> responseEntity = hotelController.addHotelAmenityByIds(1, 1);
-        assertEquals(responseEntity.getStatusCode(), HttpStatus.CONFLICT);
+        assertEquals(responseEntity.getBody(), amenityModels);
     }
 
     @Test
     public void testRemoveHotelAmenityByIds() {
-        RemoveAmenityHotelResponse removeAmenityHotelResponse = new RemoveAmenityHotelResponse();
-        Hotel hotel = new Hotel();
-        hotel.setId(1);
-        hotel.setName("Hotel Updated");
-        hotel.setAddress("Address");
-        hotel.setRating(7.9);
-        Amenity amenity1 = new Amenity();
-        amenity1.setId(1);
-        amenity1.setName("Wifi");
-        Amenity amenity2 = new Amenity();
-        amenity2.setId(2);
-        amenity2.setName("Pool");
-        hotel.getAmenities().add(amenity1);
-        hotel.getAmenities().add(amenity2);
-        removeAmenityHotelResponse.setHotel(hotel);
+        AmenityModel amenity1 = new AmenityModel(1, "Wifi");
+        AmenityModel amenity2 = new AmenityModel(2, "Pool");
+        List<AmenityModel> amenityModels = new ArrayList<>();
+        amenityModels.add(amenity1);
+        amenityModels.add(amenity2);
 
-        ServiceStatus serviceStatus = new ServiceStatus();
-        serviceStatus.setStatusCode(201);
-        removeAmenityHotelResponse.setServiceStatus(serviceStatus);
-
-        when(hotelService.removeAmenityFromHotelByIds(1, 1)).thenReturn(removeAmenityHotelResponse);
+        when(hotelService.removeAmenityFromHotelByIds(1, 1)).thenReturn(amenityModels);
 
         ResponseEntity<List<AmenityModel>> responseEntity = hotelController.removeHotelAmenityByIds(1, 1);
         assertEquals(responseEntity.getStatusCode(), HttpStatus.OK);
-        assertEquals(responseEntity.getBody(), HotelMapper.getAmenities(hotel.getAmenities()));
-    }
-
-    @Test
-    public void testRemoveHotelAmenityByIdsNotFound() {
-        RemoveAmenityHotelResponse removeAmenityHotelResponse = new RemoveAmenityHotelResponse();
-        ServiceStatus serviceStatus = new ServiceStatus();
-        serviceStatus.setStatusCode(404);
-        removeAmenityHotelResponse.setServiceStatus(serviceStatus);
-
-        when(hotelService.removeAmenityFromHotelByIds(1, 1)).thenReturn(removeAmenityHotelResponse);
-
-        ResponseEntity<List<AmenityModel>> responseEntity = hotelController.removeHotelAmenityByIds(1, 1);
-        assertEquals(responseEntity.getStatusCode(), HttpStatus.NOT_FOUND);
-    }
-
-    @Test
-    public void testRemoveHotelAmenityByIdsConfict() {
-        RemoveAmenityHotelResponse removeAmenityHotelResponse = new RemoveAmenityHotelResponse();
-        ServiceStatus serviceStatus = new ServiceStatus();
-        serviceStatus.setStatusCode(409);
-        removeAmenityHotelResponse.setServiceStatus(serviceStatus);
-
-        when(hotelService.removeAmenityFromHotelByIds(1, 1)).thenReturn(removeAmenityHotelResponse);
-
-        ResponseEntity<List<AmenityModel>> responseEntity = hotelController.removeHotelAmenityByIds(1, 1);
-        assertEquals(responseEntity.getStatusCode(), HttpStatus.CONFLICT);
+        assertEquals(responseEntity.getBody(), amenityModels);
     }
 
 }

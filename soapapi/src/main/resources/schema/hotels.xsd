@@ -78,7 +78,6 @@
     <xs:complexType>
       <xs:sequence>
         <xs:element name= "hotel" type="tns:hotel"/>
-        <xs:element name= "serviceStatus" type="tns:serviceStatus"/>
       </xs:sequence>
     </xs:complexType>
   </xs:element>
@@ -97,7 +96,6 @@
     <xs:complexType>
       <xs:sequence>
         <xs:element name= "hotel" type="tns:hotel"/>
-        <xs:element name= "serviceStatus" type="tns:serviceStatus"/>
       </xs:sequence>
     </xs:complexType>
   </xs:element>
@@ -117,7 +115,6 @@
     <xs:complexType>
       <xs:sequence>
         <xs:element name= "hotel" type="tns:hotel"/>
-        <xs:element name= "serviceStatus" type="tns:serviceStatus"/>
       </xs:sequence>
     </xs:complexType>
   </xs:element>
@@ -134,7 +131,6 @@
     <xs:complexType>
       <xs:sequence>
         <xs:element name= "hotel" type="tns:hotel"/>
-        <xs:element name= "serviceStatus" type="tns:serviceStatus"/>
       </xs:sequence>
     </xs:complexType>
   </xs:element>
@@ -152,7 +148,6 @@
     <xs:complexType>
       <xs:sequence>
         <xs:element name= "hotel" type="tns:hotel"/>
-        <xs:element name= "serviceStatus" type="tns:serviceStatus"/>
       </xs:sequence>
     </xs:complexType>
   </xs:element>
@@ -170,16 +165,8 @@
     <xs:complexType>
       <xs:sequence>
         <xs:element name= "hotel" type="tns:hotel"/>
-        <xs:element name= "serviceStatus" type="tns:serviceStatus"/>
       </xs:sequence>
     </xs:complexType>
   </xs:element>
 
-  <xs:complexType name="serviceStatus">
-    <xs:sequence>
-      <xs:element name="statusCode" type="xs:int"/>
-      <xs:element name="statusName" type="xs:string"/>
-      <xs:element name="message" type="xs:string"/>
-    </xs:sequence>
-  </xs:complexType>
 </xs:schema>

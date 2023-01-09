@@ -1,7 +1,5 @@
 package choice.university.ivan.soapapi.exception;
 
-import choice.university.ivan.schemas.ServiceStatus;
-
 public class BadRequestException extends RuntimeException implements ServiceFaultException {
     private ServiceStatus serviceStatus;
 

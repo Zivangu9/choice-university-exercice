@@ -6,8 +6,6 @@ import org.springframework.ws.soap.SoapFault;
 import org.springframework.ws.soap.SoapFaultDetail;
 import org.springframework.ws.soap.server.endpoint.SoapFaultMappingExceptionResolver;
 
-import choice.university.ivan.schemas.ServiceStatus;
-
 public class DetailSoapFaultDefinitionExceptionResolver extends SoapFaultMappingExceptionResolver {
 
     private static final QName CODE = new QName("statusCode");

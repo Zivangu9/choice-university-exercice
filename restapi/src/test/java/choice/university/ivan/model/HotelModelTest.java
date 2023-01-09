@@ -13,10 +13,11 @@ public class HotelModelTest {
 
     @Test
     public void testConstructor() {
-        HotelModel hotelModel = new HotelModel(1, "Hotel Name", "Hotel Address");
+        HotelModel hotelModel = new HotelModel(1, "Hotel Name", "Hotel Address", 4.8);
         assertEquals(hotelModel.getId(), 1);
         assertEquals(hotelModel.getName(), "Hotel Name");
         assertEquals(hotelModel.getAddress(), "Hotel Address");
+        assertEquals(hotelModel.getRating(), 4.8, 0.001);
     }
 
     @Test
@@ -34,7 +35,7 @@ public class HotelModelTest {
 
     @Test
     public void testHashCode() {
-        HotelModel hotelModel = new HotelModel(1, "Hotel Name", "Hotel Address");
+        HotelModel hotelModel = new HotelModel(1, "Hotel Name", "Hotel Address", 8.7);
         hotelModel.setAmenities(new ArrayList<>());
         assertTrue(hotelModel.hashCode() == hotelModel.hashCode());
         assertTrue(new HotelModel().hashCode() == new HotelModel().hashCode());
@@ -42,24 +43,25 @@ public class HotelModelTest {
 
     @Test
     public void testEquals() {
-        HotelModel hotelModel = new HotelModel(1, "Hotel Name", "Hotel Address");
-        hotelModel.setRating(8.5);
-        HotelModel hotelModel2 = new HotelModel(1, "Hotel Name", "Hotel Address");
-        hotelModel2.setRating(8.6);
+        HotelModel hotelModel = new HotelModel(1, "Hotel Name", "Hotel Address", 8.5);
+        HotelModel hotelModel2 = new HotelModel(1, "Hotel Name", "Hotel Address", 8.6);
         assertTrue(hotelModel.equals(hotelModel));
         assertFalse(hotelModel.equals(null));
         assertFalse(hotelModel.equals(new Object()));
-        assertFalse(hotelModel.equals(new HotelModel(2, "Name", "Address")));
-        assertTrue(new HotelModel(1, null, "Address").equals(new HotelModel(1, null, "Address")));
-        assertFalse(new HotelModel(1, null, "Address").equals(new HotelModel(1, "Name", "Address")));
-        assertFalse(hotelModel.equals(new HotelModel(1, "Name", "Hotel Address")));
-        assertTrue(new HotelModel(1, "Hotel Name", null).equals(new HotelModel(1, "Hotel Name", null)));
-        assertFalse(new HotelModel(1, "Hotel Name", null).equals(new HotelModel(1, "Hotel Name", "Hotel Address")));
-        assertFalse(hotelModel.equals(new HotelModel(1, "Hotel Name", "Address")));
+        assertFalse(hotelModel.equals(new HotelModel(2, "Name", "Address", 8.7)));
+        assertTrue(new HotelModel(1, null, "Address", 8.7).equals(new HotelModel(1, null, "Address", 8.7)));
+        assertFalse(new HotelModel(1, null, "Address", 8.7).equals(new HotelModel(1, "Name", "Address", 8.7)));
+        assertFalse(hotelModel.equals(new HotelModel(1, "Name", "Hotel Address", 8.7)));
+        assertTrue(new HotelModel(1, "Hotel Name", null, 8.7).equals(new HotelModel(1, "Hotel Name", null, 8.7)));
+        assertFalse(new HotelModel(1, "Hotel Name", null, 8.7)
+                .equals(new HotelModel(1, "Hotel Name", "Hotel Address", 8.7)));
+        assertFalse(hotelModel.equals(new HotelModel(1, "Hotel Name", "Address", 8.7)));
         assertFalse(hotelModel.equals(hotelModel2));
         hotelModel2.setRating(8.5);
-        hotelModel2.setAmenities(new ArrayList<>());
+        hotelModel.setAmenities(null);
         assertFalse(hotelModel.equals(hotelModel2));
+        hotelModel2.setAmenities(null);
+        assertTrue(hotelModel.equals(hotelModel2));
         List<AmenityModel> amenities = new ArrayList<>();
         amenities.add(new AmenityModel());
         hotelModel.setAmenities(amenities);

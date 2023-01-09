@@ -4,8 +4,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.junit.jupiter.api.Test;
 
-import choice.university.ivan.schemas.ServiceStatus;
-
 public class NotFoundExceptionTest {
     @Test
     void testGetServiceStatus() {
