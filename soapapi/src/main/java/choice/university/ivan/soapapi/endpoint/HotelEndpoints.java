@@ -24,9 +24,11 @@ import choice.university.ivan.schemas.Hotel;
 import choice.university.ivan.schemas.Page;
 import choice.university.ivan.schemas.RemoveAmenityHotelRequest;
 import choice.university.ivan.schemas.RemoveAmenityHotelResponse;
-import choice.university.ivan.schemas.ServiceStatus;
 import choice.university.ivan.schemas.UpdateHotelRequest;
 import choice.university.ivan.schemas.UpdateHotelResponse;
+import choice.university.ivan.soapapi.exception.BadRequestException;
+import choice.university.ivan.soapapi.exception.ConflictException;
+import choice.university.ivan.soapapi.exception.NotFoundException;
 import choice.university.ivan.soapapi.mapper.HotelMapper;
 import choice.university.ivan.soapapi.model.HotelModel;
 import choice.university.ivan.soapapi.service.AmenityService;
@@ -44,19 +46,11 @@ public class HotelEndpoints {
     @ResponsePayload
     public GetHotelByIdResponse getHotelById(@RequestPayload GetHotelByIdRequest request) {
         GetHotelByIdResponse response = new GetHotelByIdResponse();
-        ServiceStatus serviceStatus = new ServiceStatus();
         Optional<HotelModel> optionalHotel = hotelService.getById(request.getId());
-        serviceStatus.setStatusCode(404);
-        serviceStatus.setStatusName("NOT FOUND");
-        serviceStatus.setMessage("Hotel with id: " + request.getId() + " not found");
-        if (optionalHotel.isPresent()) {
-            Hotel hotel = HotelMapper.mapHotel(optionalHotel.get());
-            response.setHotel(hotel);
-            serviceStatus.setStatusCode(302);
-            serviceStatus.setStatusName("SUCCESS");
-            serviceStatus.setMessage("Hotel with id: " + request.getId() + " was found");
-        }
-        response.setServiceStatus(serviceStatus);
+        if (!optionalHotel.isPresent())
+            throw new NotFoundException("Hotel with id: " + request.getId() + " not found");
+        Hotel hotel = HotelMapper.mapHotel(optionalHotel.get());
+        response.setHotel(hotel);
         return response;
     }
 
@@ -94,19 +88,12 @@ public class HotelEndpoints {
     @ResponsePayload
     public CreateHotelResponse processCreateHotelRequest(@RequestPayload CreateHotelRequest request) {
         CreateHotelResponse response = new CreateHotelResponse();
-        ServiceStatus serviceStatus = new ServiceStatus();
         HotelModel hotel = new HotelModel(null, request.getName(), request.getAddress(), request.getRating());
+        validateHotel(hotel);
         HotelModel hotelCreated = hotelService.createHotel(hotel);
-        serviceStatus.setStatusCode(201);
-        serviceStatus.setStatusName("SUCCESS");
-        serviceStatus.setMessage("Hotel Added Successfully");
-        if (hotelCreated == null) {
-            serviceStatus.setStatusCode(409);
-            serviceStatus.setStatusName("CONFLICT");
-            serviceStatus.setMessage("Exception while adding Hotel");
-        } else
-            response.setHotel(HotelMapper.mapHotel(hotelCreated));
-        response.setServiceStatus(serviceStatus);
+        if (hotelCreated == null)
+            throw new ConflictException("Exception while adding Hotel");
+        response.setHotel(HotelMapper.mapHotel(hotelCreated));
         return response;
     }
 
@@ -114,27 +101,15 @@ public class HotelEndpoints {
     @ResponsePayload
     public UpdateHotelResponse processUpdateHotelRequest(@RequestPayload UpdateHotelRequest request) {
         UpdateHotelResponse response = new UpdateHotelResponse();
-        ServiceStatus serviceStatus = new ServiceStatus();
-        if (!hotelService.hotelWithIdExists(request.getId())) {
-            serviceStatus.setStatusCode(404);
-            serviceStatus.setStatusName("NOT FOUND");
-            serviceStatus.setMessage("Hotel with id: " + request.getId() + " not found");
-            response.setServiceStatus(serviceStatus);
-            return response;
-        }
+        if (!hotelService.hotelWithIdExists(request.getId()))
+            throw new NotFoundException("Hotel with id: " + request.getId() + " not found");
         HotelModel hotel = new HotelModel(request.getId(), request.getName(), request.getAddress(),
                 request.getRating());
+        validateHotel(hotel);
         HotelModel hotelUpdated = hotelService.updateHotel(hotel);
-        serviceStatus.setStatusCode(200);
-        serviceStatus.setStatusName("SUCCESS");
-        serviceStatus.setMessage("Hotel updated Successfully");
-        if (hotelUpdated == null) {
-            serviceStatus.setStatusCode(409);
-            serviceStatus.setStatusName("CONFLICT");
-            serviceStatus.setMessage("Exception while updating Hotel");
-        } else
-            response.setHotel(HotelMapper.mapHotel(hotelUpdated));
-        response.setServiceStatus(serviceStatus);
+        if (hotelUpdated == null)
+            throw new ConflictException("Exception while updating Hotel");
+        response.setHotel(HotelMapper.mapHotel(hotelUpdated));
         return response;
     }
 
@@ -142,25 +117,12 @@ public class HotelEndpoints {
     @ResponsePayload
     public DeleteHotelResponse processDeleteHotelRequest(@RequestPayload DeleteHotelRequest request) {
         DeleteHotelResponse response = new DeleteHotelResponse();
-        ServiceStatus serviceStatus = new ServiceStatus();
-        if (!hotelService.hotelWithIdExists(request.getId())) {
-            serviceStatus.setStatusCode(404);
-            serviceStatus.setStatusName("NOT FOUND");
-            serviceStatus.setMessage("Hotel with id: " + request.getId() + " not found");
-            response.setServiceStatus(serviceStatus);
-            return response;
-        }
+        if (!hotelService.hotelWithIdExists(request.getId()))
+            throw new NotFoundException("Hotel with id: " + request.getId() + " not found");
         HotelModel hotelDeleted = hotelService.deleteHotel(request.getId());
-        serviceStatus.setStatusCode(200);
-        serviceStatus.setStatusName("SUCCESS");
-        serviceStatus.setMessage("Hotel deleted Successfully");
-        if (hotelDeleted == null) {
-            serviceStatus.setStatusCode(409);
-            serviceStatus.setStatusName("CONFLICT");
-            serviceStatus.setMessage("Exception while deleting Hotel");
-        } else
-            response.setHotel(HotelMapper.mapHotel(hotelDeleted));
-        response.setServiceStatus(serviceStatus);
+        if (hotelDeleted == null)
+            throw new ConflictException("Exception deleting updating Hotel");
+        response.setHotel(HotelMapper.mapHotel(hotelDeleted));
         return response;
     }
 
@@ -168,32 +130,14 @@ public class HotelEndpoints {
     @ResponsePayload
     public AddAmenityHotelResponse processAddAmenityToHotelRequest(@RequestPayload AddAmenityHotelRequest request) {
         AddAmenityHotelResponse response = new AddAmenityHotelResponse();
-        ServiceStatus serviceStatus = new ServiceStatus();
-        if (!hotelService.hotelWithIdExists(request.getIdHotel())) {
-            serviceStatus.setStatusCode(404);
-            serviceStatus.setStatusName("NOT FOUND");
-            serviceStatus.setMessage("Hotel with id: " + request.getIdHotel() + " not found");
-            response.setServiceStatus(serviceStatus);
-            return response;
-        }
-        if (!amenityService.amenityWithIdExists(request.getIdAmenity())) {
-            serviceStatus.setStatusCode(404);
-            serviceStatus.setStatusName("NOT FOUND");
-            serviceStatus.setMessage("Amenity with id: " + request.getIdAmenity() + " not found");
-            response.setServiceStatus(serviceStatus);
-            return response;
-        }
+        if (!hotelService.hotelWithIdExists(request.getIdHotel()))
+            throw new NotFoundException("Hotel with id: " + request.getIdHotel() + " not found");
+        if (!amenityService.amenityWithIdExists(request.getIdAmenity()))
+            throw new NotFoundException("Amenity with id: " + request.getIdAmenity() + " not found");
         HotelModel hotelUpdated = hotelService.addAmenityToHotel(request.getIdHotel(), request.getIdAmenity());
-        serviceStatus.setStatusCode(201);
-        serviceStatus.setStatusName("SUCCESS");
-        serviceStatus.setMessage("Amenity added to Hotel Successfully");
-        if (hotelUpdated == null) {
-            serviceStatus.setStatusCode(409);
-            serviceStatus.setStatusName("CONFLICT");
-            serviceStatus.setMessage("Exception while adding Amenity to Hotel");
-        } else
-            response.setHotel(HotelMapper.mapHotel(hotelUpdated));
-        response.setServiceStatus(serviceStatus);
+        if (hotelUpdated == null)
+            throw new ConflictException("Exception while adding Amenity to Hotel");
+        response.setHotel(HotelMapper.mapHotel(hotelUpdated));
         return response;
     }
 
@@ -202,32 +146,25 @@ public class HotelEndpoints {
     public RemoveAmenityHotelResponse processRemoveAmenityFromHotelRequest(
             @RequestPayload RemoveAmenityHotelRequest request) {
         RemoveAmenityHotelResponse response = new RemoveAmenityHotelResponse();
-        ServiceStatus serviceStatus = new ServiceStatus();
-        if (!hotelService.hotelWithIdExists(request.getIdHotel())) {
-            serviceStatus.setStatusCode(404);
-            serviceStatus.setStatusName("NOT FOUND");
-            serviceStatus.setMessage("Hotel with id: " + request.getIdHotel() + " not found");
-            response.setServiceStatus(serviceStatus);
-            return response;
-        }
-        if (!amenityService.amenityWithIdExists(request.getIdAmenity())) {
-            serviceStatus.setStatusCode(404);
-            serviceStatus.setStatusName("NOT FOUND");
-            serviceStatus.setMessage("Amenity with id: " + request.getIdAmenity() + " not found");
-            response.setServiceStatus(serviceStatus);
-            return response;
-        }
+        if (!hotelService.hotelWithIdExists(request.getIdHotel()))
+            throw new NotFoundException("Hotel with id: " + request.getIdHotel() + " not found");
+        if (!amenityService.amenityWithIdExists(request.getIdAmenity()))
+            throw new NotFoundException("Amenity with id: " + request.getIdAmenity() + " not found");
         HotelModel hotelUpdated = hotelService.removeAmenityFromHotel(request.getIdHotel(), request.getIdAmenity());
-        serviceStatus.setStatusCode(200);
-        serviceStatus.setStatusName("SUCCESS");
-        serviceStatus.setMessage("Amenity removed from Hotel Successfully");
-        if (hotelUpdated == null) {
-            serviceStatus.setStatusCode(409);
-            serviceStatus.setStatusName("CONFLICT");
-            serviceStatus.setMessage("Exception while removing Amenity from Hotel");
-        } else
-            response.setHotel(HotelMapper.mapHotel(hotelUpdated));
-        response.setServiceStatus(serviceStatus);
+        if (hotelUpdated == null)
+            throw new ConflictException("Exception while removing Amenity from Hotel");
+        response.setHotel(HotelMapper.mapHotel(hotelUpdated));
         return response;
+    }
+
+    private void validateHotel(HotelModel hotel) {
+        if (hotel.getName() == null || hotel.getName().equals(""))
+            throw new BadRequestException("Name can't be empty");
+
+        if (hotel.getAddress() == null || hotel.getAddress().equals(""))
+            throw new BadRequestException("Address can't be empty");
+
+        if (hotel.getRating() < 0 || hotel.getRating() > 10)
+            throw new BadRequestException("Invalid rating. The rating must be a numeric value between 0 and 10");
     }
 }
