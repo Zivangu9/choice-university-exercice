@@ -155,4 +155,17 @@ public class HotelControllerTest {
         assertEquals(responseEntity.getBody(), amenityModels);
     }
 
+    @Test
+    public void testGetAllAmenities() {
+        List<AmenityModel> amenityModels = new ArrayList<>();
+        amenityModels.add(new AmenityModel(1, "Wifi"));
+        amenityModels.add(new AmenityModel(2, "Pool"));
+
+        when(hotelService.getAllAmenities()).thenReturn(amenityModels);
+
+        ResponseEntity<List<AmenityModel>> responseEntity = underTest.getAllAmenities();
+        assertEquals(responseEntity.getStatusCode(), HttpStatus.FOUND);
+        assertEquals(responseEntity.getBody(), amenityModels);
+    }
+
 }

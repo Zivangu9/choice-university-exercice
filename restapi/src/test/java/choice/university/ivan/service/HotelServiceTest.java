@@ -2,6 +2,7 @@ package choice.university.ivan.service;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertThrows;
 import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
@@ -14,6 +15,7 @@ import org.mockito.Mock;
 import org.springframework.test.context.ContextConfiguration;
 
 import choice.university.ivan.client.HotelClient;
+import choice.university.ivan.exception.BadRequestException;
 import choice.university.ivan.mapper.HotelMapper;
 import choice.university.ivan.model.AmenityModel;
 import choice.university.ivan.model.HotelModel;
@@ -21,6 +23,7 @@ import choice.university.ivan.schemas.AddAmenityHotelResponse;
 import choice.university.ivan.schemas.CreateHotelResponse;
 import choice.university.ivan.schemas.DeleteHotelResponse;
 import choice.university.ivan.schemas.FilterHotelsResponse;
+import choice.university.ivan.schemas.GetAllAmenitiesResponse;
 import choice.university.ivan.schemas.GetHotelByIdResponse;
 import choice.university.ivan.schemas.Hotel;
 import choice.university.ivan.schemas.Page;
@@ -126,6 +129,15 @@ public class HotelServiceTest {
     }
 
     @Test
+    public void testGetAllAmenities() {
+        GetAllAmenitiesResponse getAllAmenitiesResponseMock = new GetAllAmenitiesResponse();
+        when(hotelClient.getAllAmenities())
+                .thenReturn(getAllAmenitiesResponseMock);
+        List<AmenityModel> amenityModels = underTest.getAllAmenities();
+        assertNotNull(amenityModels);
+    }
+
+    @Test
     public void testUpdateHotel() {
         HotelModel hotelToUpdate = new HotelModel(1, "Hotel Updated", "Hotel Address", 9.8);
         UpdateHotelResponse updateHotelResponseMock = new UpdateHotelResponse();
@@ -142,5 +154,57 @@ public class HotelServiceTest {
         assertNotNull(hotelUpdated);
         assertEquals(hotelUpdated, HotelMapper.getHotelModel(hotelUpdatedMock));
 
+    }
+
+    @Test
+    public void testValidateHotelNameNull() {
+        HotelModel hotel = new HotelModel();
+        hotel.setAddress("Hotel Address");
+        hotel.setRating(9.8);
+        assertThrows(BadRequestException.class, () -> underTest.validateHotel(hotel));
+    }
+
+    @Test
+    public void testValidateHotelNameEmpty() {
+        HotelModel hotel = new HotelModel();
+        hotel.setName("");
+        hotel.setAddress("Hotel Address");
+        hotel.setRating(9.8);
+        assertThrows(BadRequestException.class, () -> underTest.validateHotel(hotel));
+    }
+
+    @Test
+    public void testValidateHotelAddressNull() {
+        HotelModel hotel = new HotelModel();
+        hotel.setName("Hotel Name");
+        hotel.setRating(9.8);
+        assertThrows(BadRequestException.class, () -> underTest.validateHotel(hotel));
+    }
+
+    @Test
+    public void testValidateHotelAddressEmpty() {
+        HotelModel hotel = new HotelModel();
+        hotel.setName("Hotel Name");
+        hotel.setAddress("");
+        hotel.setRating(9.8);
+        assertThrows(BadRequestException.class, () -> underTest.validateHotel(hotel));
+    }
+
+    @Test
+    public void testValidateHotelRatingLower0() {
+        HotelModel hotel = new HotelModel();
+        hotel.setName("Hotel Name");
+        hotel.setAddress("Hotel Address");
+        hotel.setRating(-1);
+        assertThrows(BadRequestException.class, () -> underTest.validateHotel(hotel));
+    }
+
+    @Test
+    public void testValidateHotelRatingBigger10() {
+        HotelModel hotel = new HotelModel();
+        hotel.setName("Hotel Name");
+        hotel.setAddress("Hotel Address");
+        hotel.setRating(11);
+        assertThrows(BadRequestException.class, () -> underTest.validateHotel(hotel));
     }
 }

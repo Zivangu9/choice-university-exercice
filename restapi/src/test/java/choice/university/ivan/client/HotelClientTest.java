@@ -5,6 +5,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -17,12 +18,15 @@ import choice.university.ivan.mapper.HotelMapper;
 import choice.university.ivan.model.HotelModel;
 import choice.university.ivan.schemas.AddAmenityHotelRequest;
 import choice.university.ivan.schemas.AddAmenityHotelResponse;
+import choice.university.ivan.schemas.Amenity;
 import choice.university.ivan.schemas.CreateHotelRequest;
 import choice.university.ivan.schemas.CreateHotelResponse;
 import choice.university.ivan.schemas.DeleteHotelRequest;
 import choice.university.ivan.schemas.DeleteHotelResponse;
 import choice.university.ivan.schemas.FilterHotelsRequest;
 import choice.university.ivan.schemas.FilterHotelsResponse;
+import choice.university.ivan.schemas.GetAllAmenitiesRequest;
+import choice.university.ivan.schemas.GetAllAmenitiesResponse;
 import choice.university.ivan.schemas.GetHotelByIdRequest;
 import choice.university.ivan.schemas.GetHotelByIdResponse;
 import choice.university.ivan.schemas.Hotel;
@@ -170,6 +174,30 @@ public class HotelClientTest {
         UpdateHotelResponse updateHotelResponse = underTest.updateHotel(hotelModel);
         assertNotNull(updateHotelResponse);
         assertEquals(hotelModel, HotelMapper.getHotelModel(updateHotelResponse.getHotel()));
+
+    }
+
+    @Test
+    public void testGetAllAmenities() {
+        GetAllAmenitiesRequest getAllAmenitiesRequestMock = new GetAllAmenitiesRequest();
+        GetAllAmenitiesResponse getAllAmenitiesResponseMock = new GetAllAmenitiesResponse();
+        List<Amenity> amenities = new ArrayList<>();
+        Amenity a1 = new Amenity();
+        a1.setId(1);
+        a1.setName("internet");
+        Amenity a2 = new Amenity();
+        a2.setId(2);
+        a2.setName("wifi");
+        getAllAmenitiesResponseMock.getAmenities().add(a1);
+        amenities.add(a1);
+        getAllAmenitiesResponseMock.getAmenities().add(a2);
+        amenities.add(a2);
+
+        when(webServiceTemplate.marshalSendAndReceive(getAllAmenitiesRequestMock))
+                .thenReturn(getAllAmenitiesResponseMock);
+        GetAllAmenitiesResponse getAllAmenitiesResponse = underTest.getAllAmenities();
+        assertNotNull(getAllAmenitiesResponse);
+        assertEquals(getAllAmenitiesResponse.getAmenities(), amenities);
 
     }
 }
