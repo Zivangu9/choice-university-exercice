@@ -36,13 +36,13 @@ import choice.university.ivan.schemas.UpdateHotelResponse;
 @ContextConfiguration(locations = { "/test-config.xml" })
 public class HotelClientTest {
     @InjectMocks
-    private HotelClient hotelService;
+    private HotelClient underTest;
     @Mock
     private WebServiceTemplate webServiceTemplate;
 
     @Test
     public void testContextLoad() {
-        assertNotNull(hotelService);
+        assertNotNull(underTest);
     }
 
     @Test
@@ -53,7 +53,7 @@ public class HotelClientTest {
         AddAmenityHotelResponse addAmenityHotelResponseMock = new AddAmenityHotelResponse();
         when(webServiceTemplate.marshalSendAndReceive(addAmenityHotelRequestMock))
                 .thenReturn(addAmenityHotelResponseMock);
-        AddAmenityHotelResponse removeAmenityHotelResponse = hotelService.addAmenityToHotelByIds(1, 1);
+        AddAmenityHotelResponse removeAmenityHotelResponse = underTest.addAmenityToHotelByIds(1, 1);
 
         assertNotNull(removeAmenityHotelResponse);
     }
@@ -75,7 +75,7 @@ public class HotelClientTest {
 
         HotelModel hotelModel = new HotelModel(0, "New Hotel", "New Hotel Address", 9.7);
         hotelModel.setAmenities(new ArrayList<>());
-        CreateHotelResponse createHotelResponse = hotelService.createHotel(hotelModel);
+        CreateHotelResponse createHotelResponse = underTest.createHotel(hotelModel);
         assertEquals(createHotelResponse, createHotelResponseMock);
         hotelModel.setId(1);
         assertEquals(hotelModel, HotelMapper.getHotelModel(createHotelResponse.getHotel()));
@@ -94,7 +94,7 @@ public class HotelClientTest {
         deleteHotelResponseMock.setHotel(hotelDeleted);
 
         when(webServiceTemplate.marshalSendAndReceive(deleteHotelRequestMock)).thenReturn(deleteHotelResponseMock);
-        DeleteHotelResponse deleteHotelResponse = hotelService.deleteHotel(1);
+        DeleteHotelResponse deleteHotelResponse = underTest.deleteHotel(1);
         assertNotNull(deleteHotelResponse);
         HotelModel hotelModel = new HotelModel();
         hotelModel.setId(1);
@@ -118,7 +118,7 @@ public class HotelClientTest {
         filterHotelsResponseMock.setPage(pageMock);
         when(webServiceTemplate.marshalSendAndReceive(filterHotelsRequestMock)).thenReturn(filterHotelsResponseMock);
 
-        FilterHotelsResponse filterHotelsResponse = hotelService.filterHotels("", 0);
+        FilterHotelsResponse filterHotelsResponse = underTest.filterHotels("", 0);
         assertNotNull(filterHotelsResponse);
         assertEquals(filterHotelsResponseMock, filterHotelsResponse);
     }
@@ -129,7 +129,7 @@ public class HotelClientTest {
         getHotelByIdRequestMock.setId(1);
         GetHotelByIdResponse getHotelByIdResponseMock = new GetHotelByIdResponse();
         when(webServiceTemplate.marshalSendAndReceive(getHotelByIdRequestMock)).thenReturn(getHotelByIdResponseMock);
-        GetHotelByIdResponse getHotelByIdResponse = hotelService.getHotelById(1);
+        GetHotelByIdResponse getHotelByIdResponse = underTest.getHotelById(1);
         assertNotNull(getHotelByIdResponse);
     }
 
@@ -141,7 +141,7 @@ public class HotelClientTest {
         RemoveAmenityHotelResponse removeAmenityHotelResponseMock = new RemoveAmenityHotelResponse();
         when(webServiceTemplate.marshalSendAndReceive(removeAmenityHotelRequestMock))
                 .thenReturn(removeAmenityHotelResponseMock);
-        RemoveAmenityHotelResponse removeAmenityHotelResponse = hotelService.removeAmenityFromHotelByIds(1, 1);
+        RemoveAmenityHotelResponse removeAmenityHotelResponse = underTest.removeAmenityFromHotelByIds(1, 1);
         assertNotNull(removeAmenityHotelResponse);
     }
 
@@ -167,7 +167,7 @@ public class HotelClientTest {
         hotelModel.setAddress("Hotel Address");
         hotelModel.setRating(9.8);
         hotelModel.setAmenities(new ArrayList<>());
-        UpdateHotelResponse updateHotelResponse = hotelService.updateHotel(hotelModel);
+        UpdateHotelResponse updateHotelResponse = underTest.updateHotel(hotelModel);
         assertNotNull(updateHotelResponse);
         assertEquals(hotelModel, HotelMapper.getHotelModel(updateHotelResponse.getHotel()));
 

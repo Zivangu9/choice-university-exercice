@@ -26,14 +26,14 @@ import choice.university.ivan.service.HotelServiceImpl;
 @ContextConfiguration(locations = { "/test-config.xml" })
 public class HotelControllerTest {
     @InjectMocks
-    private HotelController hotelController;
+    private HotelController underTest;
 
     @Mock
     private HotelServiceImpl hotelService;
 
     @Test
     public void testContextLoads() {
-        assertNotNull(hotelController);
+        assertNotNull(underTest);
         assertNotNull(hotelService);
     }
 
@@ -62,7 +62,7 @@ public class HotelControllerTest {
         page.getItems().add(hotel2);
         when(hotelService.filterHotels("", 0)).thenReturn(filterHotelsResponseMock);
 
-        FilterHotelsResponse filterHotelsResponse = hotelController.filterHotels("", 0);
+        FilterHotelsResponse filterHotelsResponse = underTest.filterHotels("", 0);
 
         assertEquals(filterHotelsResponse.getPage(), page);
         assertEquals(filterHotelsResponse, filterHotelsResponseMock);
@@ -74,7 +74,7 @@ public class HotelControllerTest {
         HotelModel hotel = new HotelModel(1, "Address", "Hotel Name", 8.4);
         when(hotelService.getHotelById(1)).thenReturn(hotel);
 
-        ResponseEntity<HotelModel> responseEntity = hotelController.getHotelByID(1);
+        ResponseEntity<HotelModel> responseEntity = underTest.getHotelByID(1);
         assertEquals(responseEntity.getStatusCode(), HttpStatus.FOUND);
         assertEquals(responseEntity.getBody(), hotel);
     }
@@ -85,7 +85,7 @@ public class HotelControllerTest {
         HotelModel hotelCreated = new HotelModel(1, "Hotel Created", "Address", 7.8);
         when(hotelService.createHotel(hotelToCreate)).thenReturn(hotelCreated);
 
-        ResponseEntity<HotelModel> responseEntity = hotelController.createHotel(hotelToCreate);
+        ResponseEntity<HotelModel> responseEntity = underTest.createHotel(hotelToCreate);
         assertEquals(responseEntity.getStatusCode(), HttpStatus.CREATED);
         assertEquals(responseEntity.getBody(), hotelCreated);
     }
@@ -95,7 +95,7 @@ public class HotelControllerTest {
         HotelModel hotelToUpdate = new HotelModel(1, "Hotel Created", "Address", 7.8);
         when(hotelService.updateHotel(hotelToUpdate)).thenReturn(hotelToUpdate);
 
-        ResponseEntity<HotelModel> responseEntity = hotelController.updateHotel(1, hotelToUpdate);
+        ResponseEntity<HotelModel> responseEntity = underTest.updateHotel(1, hotelToUpdate);
         assertEquals(responseEntity.getStatusCode(), HttpStatus.OK);
         assertEquals(responseEntity.getBody(), hotelToUpdate);
     }
@@ -105,7 +105,7 @@ public class HotelControllerTest {
         HotelModel hotelDeleted = new HotelModel(1, "Hotel Deleted", "Address", 7.8);
         when(hotelService.deleteHotel(1)).thenReturn(hotelDeleted);
 
-        ResponseEntity<HotelModel> responseEntity = hotelController.deleteHotelByID(1);
+        ResponseEntity<HotelModel> responseEntity = underTest.deleteHotelByID(1);
         assertEquals(responseEntity.getStatusCode(), HttpStatus.OK);
         assertEquals(responseEntity.getBody(), hotelDeleted);
     }
@@ -121,7 +121,7 @@ public class HotelControllerTest {
         hotelModel.setAmenities(amenities);
         when(hotelService.getHotelById(1)).thenReturn(hotelModel);
 
-        ResponseEntity<List<AmenityModel>> responseEntity = hotelController.getHotelAmenities(1);
+        ResponseEntity<List<AmenityModel>> responseEntity = underTest.getHotelAmenities(1);
         assertEquals(responseEntity.getStatusCode(), HttpStatus.FOUND);
         assertEquals(responseEntity.getBody(), amenities);
     }
@@ -135,7 +135,7 @@ public class HotelControllerTest {
         amenityModels.add(amenity2);
         when(hotelService.addAmenityToHotelByIds(1, 1)).thenReturn(amenityModels);
 
-        ResponseEntity<List<AmenityModel>> responseEntity = hotelController.addHotelAmenityByIds(1, 1);
+        ResponseEntity<List<AmenityModel>> responseEntity = underTest.addHotelAmenityByIds(1, 1);
         assertEquals(responseEntity.getStatusCode(), HttpStatus.OK);
         assertEquals(responseEntity.getBody(), amenityModels);
     }
@@ -150,7 +150,7 @@ public class HotelControllerTest {
 
         when(hotelService.removeAmenityFromHotelByIds(1, 1)).thenReturn(amenityModels);
 
-        ResponseEntity<List<AmenityModel>> responseEntity = hotelController.removeHotelAmenityByIds(1, 1);
+        ResponseEntity<List<AmenityModel>> responseEntity = underTest.removeHotelAmenityByIds(1, 1);
         assertEquals(responseEntity.getStatusCode(), HttpStatus.OK);
         assertEquals(responseEntity.getBody(), amenityModels);
     }

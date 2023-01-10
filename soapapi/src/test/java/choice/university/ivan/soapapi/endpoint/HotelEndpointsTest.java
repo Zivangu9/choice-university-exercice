@@ -42,7 +42,7 @@ import choice.university.ivan.soapapi.service.HotelServiceImpl;
 @ExtendWith(SpringExtension.class)
 public class HotelEndpointsTest {
     @InjectMocks
-    private HotelEndpoints hotelEndpoints;
+    private HotelEndpoints underTest;
     @Mock
     private HotelServiceImpl hotelService;
     @Mock
@@ -50,7 +50,7 @@ public class HotelEndpointsTest {
 
     @Test
     public void testContextLoads() {
-        assertNotNull(hotelEndpoints);
+        assertNotNull(underTest);
         assertNotNull(hotelService);
         assertNotNull(amenityService);
     }
@@ -61,7 +61,7 @@ public class HotelEndpointsTest {
         getHotelByIdRequest.setId(1);
         HotelModel hotelModel = new HotelModel(1, "Hotel Name", "Hotel Address", 7.8);
         when(hotelService.getById(1)).thenReturn(hotelModel);
-        GetHotelByIdResponse getHotelByIdResponse = hotelEndpoints.getHotelById(getHotelByIdRequest);
+        GetHotelByIdResponse getHotelByIdResponse = underTest.getHotelById(getHotelByIdRequest);
         assertEquals(getHotelByIdResponse.getHotel(), HotelMapper.mapHotel(hotelModel));
     }
 
@@ -70,7 +70,7 @@ public class HotelEndpointsTest {
         GetHotelByIdRequest getHotelByIdRequest = new GetHotelByIdRequest();
         getHotelByIdRequest.setId(1);
         when(hotelService.getById(1)).thenThrow(NotFoundException.class);
-        assertThrows(NotFoundException.class, () -> hotelEndpoints.getHotelById(getHotelByIdRequest));
+        assertThrows(NotFoundException.class, () -> underTest.getHotelById(getHotelByIdRequest));
     }
 
     @Test
@@ -80,7 +80,7 @@ public class HotelEndpointsTest {
         List<HotelModel> hotelsFiltered = new ArrayList<>();
         hotelsFiltered.add(new HotelModel(1, "Hotel Name", "Hotel Address", 7.8));
         when(hotelService.filterHotels("", 0, 10)).thenReturn(new PageImpl<>(hotelsFiltered));
-        GetAllHotelsResponse getAllHotelsResponse = hotelEndpoints.processAllHotelsRequest(getAllHotelsRequest);
+        GetAllHotelsResponse getAllHotelsResponse = underTest.processAllHotelsRequest(getAllHotelsRequest);
         assertEquals(getAllHotelsResponse.getPage().getTotal(), 1);
     }
 
@@ -92,7 +92,7 @@ public class HotelEndpointsTest {
         List<HotelModel> hotelsFiltered = new ArrayList<>();
         hotelsFiltered.add(new HotelModel(1, "Hotel Name", "Hotel Address", 7.8));
         when(hotelService.filterHotels("", 0, 10)).thenReturn(new PageImpl<>(hotelsFiltered));
-        FilterHotelsResponse getAllHotelsResponse = hotelEndpoints.processFilterHotelsRequest(filterHotelsRequest);
+        FilterHotelsResponse getAllHotelsResponse = underTest.processFilterHotelsRequest(filterHotelsRequest);
         assertEquals(getAllHotelsResponse.getPage().getTotal(), 1);
     }
 
@@ -105,7 +105,7 @@ public class HotelEndpointsTest {
         HotelModel hotelModelToCreate = new HotelModel(null, "Hotel Name", "Hotel Address", 9.8);
         HotelModel hotelModelCreated = new HotelModel(1, "Hotel Name", "Hotel Address", 9.8);
         when(hotelService.createHotel(hotelModelToCreate)).thenReturn(hotelModelCreated);
-        CreateHotelResponse createHotelResponse = hotelEndpoints
+        CreateHotelResponse createHotelResponse = underTest
                 .processCreateHotelRequest(createHotelRequest);
         assertEquals(createHotelResponse.getHotel(), HotelMapper.mapHotel(hotelModelCreated));
     }
@@ -118,7 +118,7 @@ public class HotelEndpointsTest {
         createHotelRequest.setRating(9.8);
         HotelModel hotelModelToCreate = new HotelModel(null, "Hotel Name", "Hotel Address", 9.8);
         when(hotelService.createHotel(hotelModelToCreate)).thenThrow(ConflictException.class);
-        assertThrows(ConflictException.class, () -> hotelEndpoints.processCreateHotelRequest(createHotelRequest));
+        assertThrows(ConflictException.class, () -> underTest.processCreateHotelRequest(createHotelRequest));
     }
 
     @Test
@@ -132,7 +132,7 @@ public class HotelEndpointsTest {
         HotelModel hotelModelUpdated = new HotelModel(1, "Hotel Name", "Hotel Address", 9.8);
         when(hotelService.getById(1)).thenReturn(hotelModelToUpdate);
         when(hotelService.updateHotel(hotelModelToUpdate)).thenReturn(hotelModelUpdated);
-        UpdateHotelResponse updateHotelResponse = hotelEndpoints
+        UpdateHotelResponse updateHotelResponse = underTest
                 .processUpdateHotelRequest(updateHotelRequest);
         assertEquals(updateHotelResponse.getHotel(), HotelMapper.mapHotel(hotelModelUpdated));
     }
@@ -144,7 +144,7 @@ public class HotelEndpointsTest {
         HotelModel hotelModelDeleted = new HotelModel(1, "Hotel Name", "Hotel Address", 9.8);
         when(hotelService.getById(1)).thenReturn(hotelModelDeleted);
         when(hotelService.deleteHotel(1)).thenReturn(hotelModelDeleted);
-        DeleteHotelResponse updateHotelResponse = hotelEndpoints
+        DeleteHotelResponse updateHotelResponse = underTest
                 .processDeleteHotelRequest(deleteHotelRequest);
         assertEquals(updateHotelResponse.getHotel(), HotelMapper.mapHotel(hotelModelDeleted));
     }
@@ -160,7 +160,7 @@ public class HotelEndpointsTest {
         when(hotelService.getById(1)).thenReturn(hotelModelUpdated);
         when(amenityService.getById(1)).thenReturn(amenityModelToAdd);
         when(hotelService.addAmenityToHotel(1, 1)).thenReturn(hotelModelUpdated);
-        AddAmenityHotelResponse addAmenityHotelResponse = hotelEndpoints
+        AddAmenityHotelResponse addAmenityHotelResponse = underTest
                 .processAddAmenityToHotelRequest(addAmenityHotelRequest);
         assertEquals(addAmenityHotelResponse.getHotel(), HotelMapper.mapHotel(hotelModelUpdated));
     }
@@ -176,7 +176,7 @@ public class HotelEndpointsTest {
         when(hotelService.getById(1)).thenReturn(hotelModelUpdated);
         when(amenityService.getById(1)).thenReturn(amenityModelToRemove);
         when(hotelService.removeAmenityFromHotel(1, 1)).thenReturn(hotelModelUpdated);
-        RemoveAmenityHotelResponse removeAmenityHotelResponse = hotelEndpoints
+        RemoveAmenityHotelResponse removeAmenityHotelResponse = underTest
                 .processRemoveAmenityFromHotelRequest(removeAmenityHotelRequest);
         assertEquals(removeAmenityHotelResponse.getHotel(), HotelMapper.mapHotel(hotelModelUpdated));
     }

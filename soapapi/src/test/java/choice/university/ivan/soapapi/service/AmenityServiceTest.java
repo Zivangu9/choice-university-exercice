@@ -21,18 +21,18 @@ public class AmenityServiceTest {
     @Mock
     private AmenityRepository amenityRepository;
     @InjectMocks
-    private AmenityServiceImpl amenityService;
+    private AmenityServiceImpl underTest;
 
     @Test
     void testGetById() {
         AmenityModel amenityModel = new AmenityModel(1, "Internet");
         when(amenityRepository.findById(1)).thenReturn(Optional.of(amenityModel));
-        assertNotNull(amenityService.getById(1));
+        assertNotNull(underTest.getById(1));
     }
 
     @Test
     void testGetByIdNotFound() {
         when(amenityRepository.findById(1)).thenReturn(Optional.empty());
-        assertThrows(NotFoundException.class, ()->amenityService.getById(1));
+        assertThrows(NotFoundException.class, ()->underTest.getById(1));
     }
 }

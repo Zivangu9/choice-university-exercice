@@ -32,11 +32,11 @@ public class HotelServiceTest {
     @Mock
     private AmenityService amenityService;
     @InjectMocks
-    private HotelServiceImpl hotelService;
+    private HotelServiceImpl underTest;
 
     @Test
     public void contextLoads() {
-        assertNotNull(hotelService);
+        assertNotNull(underTest);
     }
 
     @Test
@@ -48,7 +48,7 @@ public class HotelServiceTest {
         when(amenityService.getById(1)).thenReturn(amenityToAdd);
         when(hotelRepository.findById(1)).thenReturn(Optional.of(hotelToUpdate));
         when(hotelRepository.save(hotelToUpdate)).thenReturn(hotelToUpdate);
-        HotelModel hotelUpdated = hotelService.addAmenityToHotel(1, 1);
+        HotelModel hotelUpdated = underTest.addAmenityToHotel(1, 1);
         assertEquals(hotelUpdated.getAmenities().size(), 2);
     }
 
@@ -61,7 +61,7 @@ public class HotelServiceTest {
         when(amenityService.getById(1)).thenReturn(amenityToAdd);
         when(hotelRepository.findById(1)).thenReturn(Optional.of(hotelToUpdate));
         when(hotelRepository.save(hotelToUpdate)).thenThrow(RuntimeException.class);
-        assertThrows(ConflictException.class, () -> hotelService.addAmenityToHotel(1, 1));
+        assertThrows(ConflictException.class, () -> underTest.addAmenityToHotel(1, 1));
     }
 
     @Test
@@ -72,7 +72,7 @@ public class HotelServiceTest {
         when(amenityService.getById(1)).thenReturn(amenityToAdd);
         when(hotelRepository.findById(1)).thenReturn(Optional.of(hotelToUpdate));
         when(hotelRepository.save(hotelToUpdate)).thenReturn(hotelToUpdate);
-        HotelModel hotelUpdated = hotelService.addAmenityToHotel(1, 1);
+        HotelModel hotelUpdated = underTest.addAmenityToHotel(1, 1);
         assertEquals(hotelUpdated.getAmenities().size(), 1);
     }
 
@@ -81,21 +81,21 @@ public class HotelServiceTest {
         HotelModel hotelToSave = new HotelModel(null, "New Hotel", "Address", 8);
         HotelModel hotelSaved = new HotelModel(1, "New Hotel", "Address", 8);
         when(hotelRepository.save(hotelToSave)).thenReturn(hotelSaved);
-        assertEquals(hotelSaved, hotelService.createHotel(hotelToSave));
+        assertEquals(hotelSaved, underTest.createHotel(hotelToSave));
     }
 
     @Test
     public void testCreateHotelError() {
         HotelModel hotelToSave = new HotelModel(null, "New Hotel", "Address", 8);
         when(hotelRepository.save(hotelToSave)).thenThrow(DataIntegrityViolationException.class);
-        assertThrows(ConflictException.class, () -> hotelService.createHotel(hotelToSave));
+        assertThrows(ConflictException.class, () -> underTest.createHotel(hotelToSave));
     }
 
     @Test
     public void testDeleteHotel() {
         HotelModel hotelToDelete = new HotelModel(1, "Hotel to delete", "Address", 5.7);
         when(hotelRepository.findById(1)).thenReturn(Optional.of(hotelToDelete));
-        assertEquals(hotelToDelete, hotelService.deleteHotel(1));
+        assertEquals(hotelToDelete, underTest.deleteHotel(1));
     }
 
     @Test
@@ -103,21 +103,21 @@ public class HotelServiceTest {
         PageRequest pagerRequest = PageRequest.of(0, 10);
         Page<HotelModel> page = new PageImpl<>(new ArrayList<>());
         when(hotelRepository.findByNameContaining("", pagerRequest)).thenReturn(page);
-        assertNotNull(hotelService.filterHotels("", 0, 10));
+        assertNotNull(underTest.filterHotels("", 0, 10));
     }
 
     @Test
     public void testGetById() {
         HotelModel hotelModel = new HotelModel(1, "Hotel Testing", "Address", 8.5);
         when(hotelRepository.findById(1)).thenReturn(Optional.of(hotelModel));
-        HotelModel hotel = hotelService.getById(1);
+        HotelModel hotel = underTest.getById(1);
         assertEquals(hotelModel, hotel);
     }
 
     @Test
     public void testGetByIdNotFound() {
         when(hotelRepository.findById(1)).thenReturn(Optional.empty());
-        assertThrows(NotFoundException.class, () -> hotelService.getById(1));
+        assertThrows(NotFoundException.class, () -> underTest.getById(1));
     }
 
     @Test
@@ -130,7 +130,7 @@ public class HotelServiceTest {
         when(amenityService.getById(1)).thenReturn(amenityToRemove);
         when(hotelRepository.findById(1)).thenReturn(Optional.of(hotelToUpdate));
         when(hotelRepository.save(hotelToUpdate)).thenReturn(hotelToUpdate);
-        HotelModel hotelUpdated = hotelService.removeAmenityFromHotel(1, 1);
+        HotelModel hotelUpdated = underTest.removeAmenityFromHotel(1, 1);
         assertEquals(hotelUpdated.getAmenities().size(), 1);
     }
 
@@ -144,7 +144,7 @@ public class HotelServiceTest {
         when(amenityService.getById(1)).thenReturn(amenityToRemove);
         when(hotelRepository.findById(1)).thenReturn(Optional.of(hotelToUpdate));
         when(hotelRepository.save(hotelToUpdate)).thenThrow(RuntimeException.class);
-        assertThrows(ConflictException.class, () -> hotelService.removeAmenityFromHotel(1, 1));
+        assertThrows(ConflictException.class, () -> underTest.removeAmenityFromHotel(1, 1));
     }
 
     @Test
@@ -152,7 +152,7 @@ public class HotelServiceTest {
         HotelModel hotelUpdated = new HotelModel(1, "New Hotel", "Address", 8);
         when(hotelRepository.findById(1)).thenReturn(Optional.of(hotelUpdated));
         when(hotelRepository.save(hotelUpdated)).thenReturn(hotelUpdated);
-        assertEquals(hotelUpdated, hotelService.updateHotel(hotelUpdated));
+        assertEquals(hotelUpdated, underTest.updateHotel(hotelUpdated));
     }
 
     @Test
@@ -160,7 +160,7 @@ public class HotelServiceTest {
         HotelModel hotelUpdated = new HotelModel(1, "New Hotel", "Address", 8);
         when(hotelRepository.findById(1)).thenReturn(Optional.of(hotelUpdated));
         when(hotelRepository.save(hotelUpdated)).thenThrow(RuntimeException.class);
-        assertThrows(ConflictException.class, () -> hotelService.updateHotel(hotelUpdated));
+        assertThrows(ConflictException.class, () -> underTest.updateHotel(hotelUpdated));
     }
 
     @Test
@@ -168,7 +168,7 @@ public class HotelServiceTest {
         HotelModel hotel = new HotelModel();
         hotel.setAddress("Hotel Address");
         hotel.setRating(9.8);
-        assertThrows(BadRequestException.class, () -> hotelService.validateHotel(hotel));
+        assertThrows(BadRequestException.class, () -> underTest.validateHotel(hotel));
     }
 
     @Test
@@ -177,7 +177,7 @@ public class HotelServiceTest {
         hotel.setName("");
         hotel.setAddress("Hotel Address");
         hotel.setRating(9.8);
-        assertThrows(BadRequestException.class, () -> hotelService.validateHotel(hotel));
+        assertThrows(BadRequestException.class, () -> underTest.validateHotel(hotel));
     }
 
     @Test
@@ -185,7 +185,7 @@ public class HotelServiceTest {
         HotelModel hotel = new HotelModel();
         hotel.setName("Hotel Name");
         hotel.setRating(9.8);
-        assertThrows(BadRequestException.class, () -> hotelService.validateHotel(hotel));
+        assertThrows(BadRequestException.class, () -> underTest.validateHotel(hotel));
     }
 
     @Test
@@ -194,7 +194,7 @@ public class HotelServiceTest {
         hotel.setName("Hotel Name");
         hotel.setAddress("");
         hotel.setRating(9.8);
-        assertThrows(BadRequestException.class, () -> hotelService.validateHotel(hotel));
+        assertThrows(BadRequestException.class, () -> underTest.validateHotel(hotel));
     }
 
     @Test
@@ -203,7 +203,7 @@ public class HotelServiceTest {
         hotel.setName("Hotel Name");
         hotel.setAddress("Hotel Address");
         hotel.setRating(-1);
-        assertThrows(BadRequestException.class, () -> hotelService.validateHotel(hotel));
+        assertThrows(BadRequestException.class, () -> underTest.validateHotel(hotel));
     }
 
     @Test
@@ -212,7 +212,7 @@ public class HotelServiceTest {
         hotel.setName("Hotel Name");
         hotel.setAddress("Hotel Address");
         hotel.setRating(11);
-        assertThrows(BadRequestException.class, () -> hotelService.validateHotel(hotel));
+        assertThrows(BadRequestException.class, () -> underTest.validateHotel(hotel));
     }
 
 }
