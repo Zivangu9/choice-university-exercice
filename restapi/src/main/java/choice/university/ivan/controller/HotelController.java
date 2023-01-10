@@ -55,6 +55,11 @@ public class HotelController {
         return new ResponseEntity<HotelModel>(hotelService.deleteHotel(id), HttpStatus.OK);
     }
 
+    @GetMapping("/amenities")
+    public ResponseEntity<List<AmenityModel>> getAllAmenities() {
+        return new ResponseEntity<List<AmenityModel>>(hotelService.getAllAmenities(), HttpStatus.FOUND);
+    }
+
     @GetMapping("/{id}/amenities")
     public ResponseEntity<List<AmenityModel>> getHotelAmenities(@PathVariable("id") int id) {
         return new ResponseEntity<List<AmenityModel>>(hotelService.getHotelById(id).getAmenities(), HttpStatus.FOUND);

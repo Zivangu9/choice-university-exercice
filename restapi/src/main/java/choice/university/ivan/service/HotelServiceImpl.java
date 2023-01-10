@@ -14,12 +14,13 @@ import choice.university.ivan.schemas.AddAmenityHotelResponse;
 import choice.university.ivan.schemas.CreateHotelResponse;
 import choice.university.ivan.schemas.DeleteHotelResponse;
 import choice.university.ivan.schemas.FilterHotelsResponse;
+import choice.university.ivan.schemas.GetAllAmenitiesResponse;
 import choice.university.ivan.schemas.GetHotelByIdResponse;
 import choice.university.ivan.schemas.RemoveAmenityHotelResponse;
 import choice.university.ivan.schemas.UpdateHotelResponse;
 
 @Service
-public class HotelServiceImpl {
+public class HotelServiceImpl implements HotelService {
     @Autowired
     HotelClient hotelClient;
 
@@ -62,6 +63,12 @@ public class HotelServiceImpl {
                 idAmenity);
         HotelModel hotelUpdated = HotelMapper.getHotelModel(removeAmenityHotelResponse.getHotel());
         return hotelUpdated.getAmenities();
+    }
+
+    public List<AmenityModel> getAllAmenities() {
+        GetAllAmenitiesResponse getAllAmenities = hotelClient.getAllAmenities();
+        List<AmenityModel> amenities = HotelMapper.getAmenities(getAllAmenities.getAmenities());
+        return amenities;
     }
 
     public void validateHotel(HotelModel hotel) {

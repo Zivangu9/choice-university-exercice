@@ -1,5 +1,6 @@
 package choice.university.ivan.soapapi.service;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,5 +20,9 @@ public class AmenityServiceImpl implements AmenityService {
         if (!optional.isPresent())
             throw new NotFoundException("Amenity with id: " + id + " not found");
         return optional.get();
+    }
+
+    public List<AmenityModel> getAll() {
+        return amenityRepository.findAll();
     }
 }

@@ -11,6 +11,8 @@ import choice.university.ivan.schemas.DeleteHotelRequest;
 import choice.university.ivan.schemas.DeleteHotelResponse;
 import choice.university.ivan.schemas.FilterHotelsRequest;
 import choice.university.ivan.schemas.FilterHotelsResponse;
+import choice.university.ivan.schemas.GetAllAmenitiesRequest;
+import choice.university.ivan.schemas.GetAllAmenitiesResponse;
 import choice.university.ivan.schemas.GetHotelByIdRequest;
 import choice.university.ivan.schemas.GetHotelByIdResponse;
 import choice.university.ivan.schemas.RemoveAmenityHotelRequest;
@@ -86,6 +88,13 @@ public class HotelClient extends WebServiceGatewaySupport {
         request.setIdAmenity(idAmenity);
 
         RemoveAmenityHotelResponse response = (RemoveAmenityHotelResponse) getWebServiceTemplate()
+                .marshalSendAndReceive(request);
+        return response;
+    }
+
+    public GetAllAmenitiesResponse getAllAmenities() {
+        GetAllAmenitiesRequest request = new GetAllAmenitiesRequest();
+        GetAllAmenitiesResponse response = (GetAllAmenitiesResponse) getWebServiceTemplate()
                 .marshalSendAndReceive(request);
         return response;
     }

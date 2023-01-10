@@ -169,4 +169,17 @@
     </xs:complexType>
   </xs:element>
 
+  <xs:element name="getAllAmenitiesRequest">
+    <xs:complexType>
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name="getAllAmenitiesResponse">
+    <xs:complexType>
+      <xs:sequence minOccurs="0" maxOccurs="unbounded">
+        <xs:element name="amenities" type="tns:amenity"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+
 </xs:schema>

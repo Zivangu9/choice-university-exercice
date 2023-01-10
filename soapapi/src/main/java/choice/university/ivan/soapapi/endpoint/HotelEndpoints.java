@@ -1,5 +1,8 @@
 package choice.university.ivan.soapapi.endpoint;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ws.server.endpoint.annotation.Endpoint;
 import org.springframework.ws.server.endpoint.annotation.PayloadRoot;
@@ -8,12 +11,15 @@ import org.springframework.ws.server.endpoint.annotation.ResponsePayload;
 
 import choice.university.ivan.schemas.AddAmenityHotelRequest;
 import choice.university.ivan.schemas.AddAmenityHotelResponse;
+import choice.university.ivan.schemas.Amenity;
 import choice.university.ivan.schemas.CreateHotelRequest;
 import choice.university.ivan.schemas.CreateHotelResponse;
 import choice.university.ivan.schemas.DeleteHotelRequest;
 import choice.university.ivan.schemas.DeleteHotelResponse;
 import choice.university.ivan.schemas.FilterHotelsRequest;
 import choice.university.ivan.schemas.FilterHotelsResponse;
+import choice.university.ivan.schemas.GetAllAmenitiesRequest;
+import choice.university.ivan.schemas.GetAllAmenitiesResponse;
 import choice.university.ivan.schemas.GetAllHotelsRequest;
 import choice.university.ivan.schemas.GetAllHotelsResponse;
 import choice.university.ivan.schemas.GetHotelByIdRequest;
@@ -25,7 +31,9 @@ import choice.university.ivan.schemas.RemoveAmenityHotelResponse;
 import choice.university.ivan.schemas.UpdateHotelRequest;
 import choice.university.ivan.schemas.UpdateHotelResponse;
 import choice.university.ivan.soapapi.mapper.HotelMapper;
+import choice.university.ivan.soapapi.model.AmenityModel;
 import choice.university.ivan.soapapi.model.HotelModel;
+import choice.university.ivan.soapapi.service.AmenityService;
 import choice.university.ivan.soapapi.service.HotelService;
 
 @Endpoint
@@ -33,6 +41,8 @@ public class HotelEndpoints {
     private static final String NAMESPACE_URI = "http://localhost:8081/hotels";
     @Autowired
     private HotelService hotelService;
+    @Autowired
+    private AmenityService amenityService;
 
     @PayloadRoot(localPart = "getHotelByIdRequest", namespace = NAMESPACE_URI)
     @ResponsePayload
@@ -119,6 +129,18 @@ public class HotelEndpoints {
         RemoveAmenityHotelResponse response = new RemoveAmenityHotelResponse();
         HotelModel hotelUpdated = hotelService.removeAmenityFromHotel(request.getIdHotel(), request.getIdAmenity());
         response.setHotel(HotelMapper.mapHotel(hotelUpdated));
+        return response;
+    }
+
+    @PayloadRoot(localPart = "getAllAmenitiesRequest", namespace = NAMESPACE_URI)
+    @ResponsePayload
+    public GetAllAmenitiesResponse processGetAllAmenitiesRequest(
+            @RequestPayload GetAllAmenitiesRequest request) {
+        GetAllAmenitiesResponse response = new GetAllAmenitiesResponse();
+        List<AmenityModel> amenities = amenityService.getAll();
+        List<Amenity> amenitiesResponse = new ArrayList<>();
+        HotelMapper.mapAmenitiesAndAddToList(amenities, amenitiesResponse);
+        amenitiesResponse.stream().forEach(a -> response.getAmenities().add(a));
         return response;
     }
 
