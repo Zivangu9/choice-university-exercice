@@ -17,12 +17,15 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import choice.university.ivan.schemas.AddAmenityHotelRequest;
 import choice.university.ivan.schemas.AddAmenityHotelResponse;
+import choice.university.ivan.schemas.Amenity;
 import choice.university.ivan.schemas.CreateHotelRequest;
 import choice.university.ivan.schemas.CreateHotelResponse;
 import choice.university.ivan.schemas.DeleteHotelRequest;
 import choice.university.ivan.schemas.DeleteHotelResponse;
 import choice.university.ivan.schemas.FilterHotelsRequest;
 import choice.university.ivan.schemas.FilterHotelsResponse;
+import choice.university.ivan.schemas.GetAllAmenitiesRequest;
+import choice.university.ivan.schemas.GetAllAmenitiesResponse;
 import choice.university.ivan.schemas.GetAllHotelsRequest;
 import choice.university.ivan.schemas.GetAllHotelsResponse;
 import choice.university.ivan.schemas.GetHotelByIdRequest;
@@ -179,6 +182,42 @@ public class HotelEndpointsTest {
         RemoveAmenityHotelResponse removeAmenityHotelResponse = underTest
                 .processRemoveAmenityFromHotelRequest(removeAmenityHotelRequest);
         assertEquals(removeAmenityHotelResponse.getHotel(), HotelMapper.mapHotel(hotelModelUpdated));
+    }
+
+    @Test
+    void testProcessGetAllAmenitiesRequest() {
+        GetAllAmenitiesRequest getAllAmenitiesRequest = new GetAllAmenitiesRequest();
+        List<AmenityModel> amenities = new ArrayList<>();
+        amenities.add(new AmenityModel(1, "pool"));
+        amenities.add(new AmenityModel(2, "internet"));
+        amenities.add(new AmenityModel(3, "wifi"));
+        amenities.add(new AmenityModel(4, "fax"));
+        amenities.add(new AmenityModel(5, "business room"));
+        List<Amenity> amenitiesExpected = new ArrayList<>();
+        Amenity a1 = new Amenity();
+        a1.setId(1);
+        a1.setName("pool");
+        Amenity a2 = new Amenity();
+        a2.setId(2);
+        a2.setName("internet");
+        Amenity a3 = new Amenity();
+        a3.setId(3);
+        a3.setName("wifi");
+        Amenity a4 = new Amenity();
+        a4.setId(4);
+        a4.setName("fax");
+        Amenity a5 = new Amenity();
+        a5.setId(5);
+        a5.setName("business room");
+        amenitiesExpected.add(a1);
+        amenitiesExpected.add(a2);
+        amenitiesExpected.add(a3);
+        amenitiesExpected.add(a4);
+        amenitiesExpected.add(a5);
+        when(amenityService.getAll()).thenReturn(amenities);
+        GetAllAmenitiesResponse getAllAmenitiesResponse = underTest
+                .processGetAllAmenitiesRequest(getAllAmenitiesRequest);
+        assertEquals(getAllAmenitiesResponse.getAmenities(), amenitiesExpected);
     }
 
 }

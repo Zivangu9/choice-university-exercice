@@ -4,6 +4,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.when;
 
+import java.util.ArrayList;
 import java.util.Optional;
 
 import org.junit.jupiter.api.Test;
@@ -34,5 +35,11 @@ public class AmenityServiceTest {
     void testGetByIdNotFound() {
         when(amenityRepository.findById(1)).thenReturn(Optional.empty());
         assertThrows(NotFoundException.class, ()->underTest.getById(1));
+    }
+
+    @Test
+    void testGetAll() {
+        when(amenityRepository.findAll()).thenReturn(new ArrayList<>());
+        assertNotNull(underTest.getAll());
     }
 }
