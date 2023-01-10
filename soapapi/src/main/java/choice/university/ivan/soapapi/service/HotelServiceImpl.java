@@ -60,12 +60,8 @@ public class HotelServiceImpl implements HotelService {
 
     public HotelModel deleteHotel(int id) {
         HotelModel hotelToDelete = getById(id);
-        try {
-            hotelRepository.deleteById(id);
-            return hotelToDelete;
-        } catch (Exception e) {
-            throw new ConflictException("Exception while deleting Hotel");
-        }
+        hotelRepository.deleteById(id);
+        return hotelToDelete;
     }
 
     public HotelModel addAmenityToHotel(int idHotel, int idAmenity) {

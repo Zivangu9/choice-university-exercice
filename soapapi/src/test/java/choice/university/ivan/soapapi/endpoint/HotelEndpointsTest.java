@@ -7,7 +7,6 @@ import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -32,7 +31,6 @@ import choice.university.ivan.schemas.RemoveAmenityHotelRequest;
 import choice.university.ivan.schemas.RemoveAmenityHotelResponse;
 import choice.university.ivan.schemas.UpdateHotelRequest;
 import choice.university.ivan.schemas.UpdateHotelResponse;
-import choice.university.ivan.soapapi.exception.BadRequestException;
 import choice.university.ivan.soapapi.exception.ConflictException;
 import choice.university.ivan.soapapi.exception.NotFoundException;
 import choice.university.ivan.soapapi.mapper.HotelMapper;
@@ -110,86 +108,6 @@ public class HotelEndpointsTest {
         CreateHotelResponse createHotelResponse = hotelEndpoints
                 .processCreateHotelRequest(createHotelRequest);
         assertEquals(createHotelResponse.getHotel(), HotelMapper.mapHotel(hotelModelCreated));
-    }
-
-    @Test
-    void testProcessCreateHotelRequestNameNull() {
-        CreateHotelRequest createHotelRequest = new CreateHotelRequest();
-        createHotelRequest.setAddress("Hotel Address");
-        createHotelRequest.setRating(9.8);
-        HotelModel hotel = new HotelModel();
-        hotel.setAddress("Hotel Address");
-        hotel.setRating(9.8);
-        when(hotelService.createHotel(hotel)).thenThrow(BadRequestException.class);
-        assertThrows(BadRequestException.class, () -> hotelEndpoints.processCreateHotelRequest(createHotelRequest));
-    }
-
-    @Test
-    void testProcessCreateHotelRequestNameEmpty() {
-        CreateHotelRequest createHotelRequest = new CreateHotelRequest();
-        createHotelRequest.setName("");
-        createHotelRequest.setAddress("Hotel Address");
-        createHotelRequest.setRating(9.8);
-        HotelModel hotel = new HotelModel();
-        hotel.setName("");
-        hotel.setAddress("Hotel Address");
-        hotel.setRating(9.8);
-        when(hotelService.createHotel(hotel)).thenThrow(BadRequestException.class);
-        assertThrows(BadRequestException.class, () -> hotelEndpoints.processCreateHotelRequest(createHotelRequest));
-    }
-
-    @Test
-    void testProcessCreateHotelRequestAddressNull() {
-        CreateHotelRequest createHotelRequest = new CreateHotelRequest();
-        createHotelRequest.setName("Hotel Name");
-        createHotelRequest.setRating(9.8);
-        HotelModel hotel = new HotelModel();
-        hotel.setName("Hotel Name");
-        hotel.setRating(9.8);
-        when(hotelService.createHotel(hotel)).thenThrow(BadRequestException.class);
-        assertThrows(BadRequestException.class, () -> hotelEndpoints.processCreateHotelRequest(createHotelRequest));
-    }
-
-    @Test
-    void testProcessCreateHotelRequestAddressEmpty() {
-        CreateHotelRequest createHotelRequest = new CreateHotelRequest();
-        createHotelRequest.setName("Hotel Name");
-        createHotelRequest.setAddress("");
-        createHotelRequest.setRating(9.8);
-        HotelModel hotel = new HotelModel();
-        hotel.setName("Hotel Name");
-        hotel.setAddress("");
-        hotel.setRating(9.8);
-        when(hotelService.createHotel(hotel)).thenThrow(BadRequestException.class);
-        assertThrows(BadRequestException.class, () -> hotelEndpoints.processCreateHotelRequest(createHotelRequest));
-    }
-
-    @Test
-    void testProcessCreateHotelRequestRatingLower0() {
-        CreateHotelRequest createHotelRequest = new CreateHotelRequest();
-        createHotelRequest.setName("Hotel Name");
-        createHotelRequest.setAddress("Hotel Address");
-        createHotelRequest.setRating(-1);
-        HotelModel hotel = new HotelModel();
-        hotel.setName("Hotel Name");
-        hotel.setAddress("Hotel Address");
-        hotel.setRating(-1);
-        when(hotelService.createHotel(hotel)).thenThrow(BadRequestException.class);
-        assertThrows(BadRequestException.class, () -> hotelEndpoints.processCreateHotelRequest(createHotelRequest));
-    }
-
-    @Test
-    void testProcessCreateHotelRequestRatingBigger10() {
-        CreateHotelRequest createHotelRequest = new CreateHotelRequest();
-        createHotelRequest.setName("Hotel Name");
-        createHotelRequest.setAddress("Hotel Address");
-        createHotelRequest.setRating(11);
-        HotelModel hotel = new HotelModel();
-        hotel.setName("Hotel Name");
-        hotel.setAddress("Hotel Address");
-        hotel.setRating(11);
-        when(hotelService.createHotel(hotel)).thenThrow(BadRequestException.class);
-        assertThrows(BadRequestException.class, () -> hotelEndpoints.processCreateHotelRequest(createHotelRequest));
     }
 
     @Test

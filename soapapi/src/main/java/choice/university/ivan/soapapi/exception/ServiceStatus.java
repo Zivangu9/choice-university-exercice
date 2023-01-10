@@ -5,6 +5,15 @@ public class ServiceStatus {
     protected String statusName;
     protected String message;
 
+    public ServiceStatus() {
+    }
+
+    public ServiceStatus(int statusCode, String statusName, String message) {
+        this.statusCode = statusCode;
+        this.statusName = statusName;
+        this.message = message;
+    }
+
     public int getStatusCode() {
         return statusCode;
     }
