@@ -23,4 +23,6 @@ public interface HotelService {
     public AddAmenityHotelResponse addAmenityToHotelByIds(int idHotel, int idAmenity);
 
     public RemoveAmenityHotelResponse removeAmenityFromHotelByIds(int idHotel, int idAmenity);
+
+    public void validateHotel(HotelModel hotel);
 }

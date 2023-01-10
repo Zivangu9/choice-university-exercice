@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import choice.university.ivan.client.HotelClient;
+import choice.university.ivan.exception.BadRequestException;
 import choice.university.ivan.mapper.HotelMapper;
 import choice.university.ivan.model.AmenityModel;
 import choice.university.ivan.model.HotelModel;
@@ -32,11 +33,13 @@ public class HotelServiceImpl {
     }
 
     public HotelModel createHotel(HotelModel hotel) {
+        validateHotel(hotel);
         CreateHotelResponse createHotelResponse = hotelClient.createHotel(hotel);
         return HotelMapper.getHotelModel(createHotelResponse.getHotel());
     }
 
     public HotelModel updateHotel(HotelModel hotel) {
+        validateHotel(hotel);
         UpdateHotelResponse updateHotelResponse = hotelClient.updateHotel(hotel);
         HotelModel hotelUpdated = HotelMapper.getHotelModel(updateHotelResponse.getHotel());
         return hotelUpdated;
@@ -59,5 +62,16 @@ public class HotelServiceImpl {
                 idAmenity);
         HotelModel hotelUpdated = HotelMapper.getHotelModel(removeAmenityHotelResponse.getHotel());
         return hotelUpdated.getAmenities();
+    }
+
+    public void validateHotel(HotelModel hotel) {
+        if (hotel.getName() == null || hotel.getName().equals(""))
+            throw new BadRequestException("Name can't be empty.");
+
+        if (hotel.getAddress() == null || hotel.getAddress().equals(""))
+            throw new BadRequestException("Address can't be empty.");
+
+        if (hotel.getRating() < 0 || hotel.getRating() > 10)
+            throw new BadRequestException("Invalid rating. The rating must be a numeric value between 0 and 10.");
     }
 }
