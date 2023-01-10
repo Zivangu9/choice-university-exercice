@@ -33,7 +33,7 @@ public class AppConfig {
     public DefaultWsdl11Definition defaultWsdl11Definition(XsdSchema hotelSchema) {
         DefaultWsdl11Definition definition = new DefaultWsdl11Definition();
         definition.setPortTypeName("HotelPort");
-        definition.setTargetNamespace("http://localhost:8081/hotels");
+        definition.setTargetNamespace("choice.university.ivan.schemas");
         definition.setLocationUri("/ws");
         definition.setSchema(hotelSchema);
         return definition;

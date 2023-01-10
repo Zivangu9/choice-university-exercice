@@ -38,7 +38,7 @@ import choice.university.ivan.soapapi.service.HotelService;
 
 @Endpoint
 public class HotelEndpoints {
-    private static final String NAMESPACE_URI = "http://localhost:8081/hotels";
+    private static final String NAMESPACE_URI = "choice.university.ivan.schemas";
     @Autowired
     private HotelService hotelService;
     @Autowired

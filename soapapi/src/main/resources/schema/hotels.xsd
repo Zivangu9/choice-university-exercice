@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" targetNamespace="http://localhost:8081/hotels"
-  xmlns:tns="http://localhost:8081/hotels" elementFormDefault="qualified">
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" targetNamespace="choice.university.ivan.schemas"
+  xmlns:tns="choice.university.ivan.schemas" elementFormDefault="qualified">
 
   <xs:element name="getAllHotelsRequest">
     <xs:complexType>
