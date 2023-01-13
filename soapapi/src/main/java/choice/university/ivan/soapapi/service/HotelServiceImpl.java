@@ -50,12 +50,8 @@ public class HotelServiceImpl implements HotelService {
         hotelToUpdate.setName(hotel.getName());
         hotelToUpdate.setAddress(hotel.getAddress());
         hotelToUpdate.setRating(hotel.getRating());
-        try {
-            HotelModel hotelUpdated = hotelRepository.save(hotel);
-            return hotelUpdated;
-        } catch (Exception e) {
-            throw new ConflictException("Exception while updating Hotel");
-        }
+        HotelModel hotelUpdated = hotelRepository.save(hotel);
+        return hotelUpdated;
     }
 
     public HotelModel deleteHotel(int id) {
@@ -75,12 +71,8 @@ public class HotelServiceImpl implements HotelService {
         if (!isAmenityInList) {
             amenities.add(amenityToAdd);
         }
-        try {
-            HotelModel hotelUpdated = hotelRepository.save(hotelToUpdate);
-            return hotelUpdated;
-        } catch (Exception e) {
-            throw new ConflictException("Exception while adding Amenity to Hotel");
-        }
+        HotelModel hotelUpdated = hotelRepository.save(hotelToUpdate);
+        return hotelUpdated;
     }
 
     public HotelModel removeAmenityFromHotel(int idHotel, int idAmenity) {
@@ -91,12 +83,8 @@ public class HotelServiceImpl implements HotelService {
             if (amenityModel.getId() == idAmenity)
                 amenityToRemove = amenityModel;
         amenities.remove(amenityToRemove);
-        try {
-            HotelModel hotelUpdated = hotelRepository.save(hotelToUpdate);
-            return hotelUpdated;
-        } catch (Exception e) {
-            throw new ConflictException("Exception while removing Amenity from Hotel");
-        }
+        HotelModel hotelUpdated = hotelRepository.save(hotelToUpdate);
+        return hotelUpdated;
     }
 
     public void validateHotel(HotelModel hotel) {
