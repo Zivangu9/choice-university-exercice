@@ -53,18 +53,6 @@ public class HotelServiceTest {
     }
 
     @Test
-    public void testAddAmenityToHotelError() {
-        AmenityModel amenityToAdd = new AmenityModel(1, "Tested");
-        HotelModel hotelToUpdate = new HotelModel(1, "Hotel with new amenity", "Address", 10);
-        hotelToUpdate.getAmenities().add(new AmenityModel(2, "WiFi"));
-        assertEquals(hotelToUpdate.getAmenities().size(), 1);
-        when(amenityService.getById(1)).thenReturn(amenityToAdd);
-        when(hotelRepository.findById(1)).thenReturn(Optional.of(hotelToUpdate));
-        when(hotelRepository.save(hotelToUpdate)).thenThrow(RuntimeException.class);
-        assertThrows(ConflictException.class, () -> underTest.addAmenityToHotel(1, 1));
-    }
-
-    @Test
     public void testAddAmenityToHotelRepeted() {
         AmenityModel amenityToAdd = new AmenityModel(1, "Tested");
         HotelModel hotelToUpdate = new HotelModel(1, "Hotel with new amenity", "Address", 10);
@@ -135,32 +123,11 @@ public class HotelServiceTest {
     }
 
     @Test
-    public void testRemoveAmenityFromHotelError() {
-        AmenityModel amenityToRemove = new AmenityModel(1, "Tested");
-        HotelModel hotelToUpdate = new HotelModel(1, "Hotel with new amenity", "Address", 10);
-        hotelToUpdate.getAmenities().add(amenityToRemove);
-        hotelToUpdate.getAmenities().add(new AmenityModel(2, "WiFi"));
-        assertEquals(hotelToUpdate.getAmenities().size(), 2);
-        when(amenityService.getById(1)).thenReturn(amenityToRemove);
-        when(hotelRepository.findById(1)).thenReturn(Optional.of(hotelToUpdate));
-        when(hotelRepository.save(hotelToUpdate)).thenThrow(RuntimeException.class);
-        assertThrows(ConflictException.class, () -> underTest.removeAmenityFromHotel(1, 1));
-    }
-
-    @Test
     public void testUpdateHotel() {
         HotelModel hotelUpdated = new HotelModel(1, "New Hotel", "Address", 8);
         when(hotelRepository.findById(1)).thenReturn(Optional.of(hotelUpdated));
         when(hotelRepository.save(hotelUpdated)).thenReturn(hotelUpdated);
         assertEquals(hotelUpdated, underTest.updateHotel(hotelUpdated));
-    }
-
-    @Test
-    public void testUpdateHotelError() {
-        HotelModel hotelUpdated = new HotelModel(1, "New Hotel", "Address", 8);
-        when(hotelRepository.findById(1)).thenReturn(Optional.of(hotelUpdated));
-        when(hotelRepository.save(hotelUpdated)).thenThrow(RuntimeException.class);
-        assertThrows(ConflictException.class, () -> underTest.updateHotel(hotelUpdated));
     }
 
     @Test

@@ -52,7 +52,7 @@ public class HotelEndpointsTest {
     private AmenityServiceImpl amenityService;
 
     @Test
-    public void testContextLoads() {
+    void testContextLoads() {
         assertNotNull(underTest);
         assertNotNull(hotelService);
         assertNotNull(amenityService);
@@ -65,7 +65,7 @@ public class HotelEndpointsTest {
         HotelModel hotelModel = new HotelModel(1, "Hotel Name", "Hotel Address", 7.8);
         when(hotelService.getById(1)).thenReturn(hotelModel);
         GetHotelByIdResponse getHotelByIdResponse = underTest.getHotelById(getHotelByIdRequest);
-        assertEquals(getHotelByIdResponse.getHotel(), HotelMapper.mapHotel(hotelModel));
+        assertEquals(getHotelByIdResponse.getHotel(), HotelMapper.INSTANCE.hotelModelToHotel(hotelModel));
     }
 
     @Test
@@ -81,10 +81,12 @@ public class HotelEndpointsTest {
         GetAllHotelsRequest getAllHotelsRequest = new GetAllHotelsRequest();
         getAllHotelsRequest.setPage(0);
         List<HotelModel> hotelsFiltered = new ArrayList<>();
-        hotelsFiltered.add(new HotelModel(1, "Hotel Name", "Hotel Address", 7.8));
+        hotelsFiltered.add(new HotelModel(1, "Hotel Name 1", "Hotel Address 1", 1.5));
+        hotelsFiltered.add(new HotelModel(2, "Hotel Name 2", "Hotel Address 2", 2.5));
+        hotelsFiltered.add(new HotelModel(3, "Hotel Name 3", "Hotel Address 3", 3.5));
         when(hotelService.filterHotels("", 0, 10)).thenReturn(new PageImpl<>(hotelsFiltered));
         GetAllHotelsResponse getAllHotelsResponse = underTest.processAllHotelsRequest(getAllHotelsRequest);
-        assertEquals(getAllHotelsResponse.getPage().getTotal(), 1);
+        assertEquals(3, getAllHotelsResponse.getPage().getTotal());
     }
 
     @Test
@@ -93,10 +95,12 @@ public class HotelEndpointsTest {
         filterHotelsRequest.setName("");
         filterHotelsRequest.setPage(0);
         List<HotelModel> hotelsFiltered = new ArrayList<>();
-        hotelsFiltered.add(new HotelModel(1, "Hotel Name", "Hotel Address", 7.8));
+        hotelsFiltered.add(new HotelModel(1, "Hotel Name 1", "Hotel Address 1", 1.5));
+        hotelsFiltered.add(new HotelModel(2, "Hotel Name 2", "Hotel Address 2", 2.5));
+        hotelsFiltered.add(new HotelModel(3, "Hotel Name 3", "Hotel Address 3", 3.5));
         when(hotelService.filterHotels("", 0, 10)).thenReturn(new PageImpl<>(hotelsFiltered));
         FilterHotelsResponse getAllHotelsResponse = underTest.processFilterHotelsRequest(filterHotelsRequest);
-        assertEquals(getAllHotelsResponse.getPage().getTotal(), 1);
+        assertEquals(3, getAllHotelsResponse.getPage().getTotal());
     }
 
     @Test
@@ -110,7 +114,7 @@ public class HotelEndpointsTest {
         when(hotelService.createHotel(hotelModelToCreate)).thenReturn(hotelModelCreated);
         CreateHotelResponse createHotelResponse = underTest
                 .processCreateHotelRequest(createHotelRequest);
-        assertEquals(createHotelResponse.getHotel(), HotelMapper.mapHotel(hotelModelCreated));
+        assertEquals(createHotelResponse.getHotel(), HotelMapper.INSTANCE.hotelModelToHotel(hotelModelCreated));
     }
 
     @Test
@@ -137,7 +141,8 @@ public class HotelEndpointsTest {
         when(hotelService.updateHotel(hotelModelToUpdate)).thenReturn(hotelModelUpdated);
         UpdateHotelResponse updateHotelResponse = underTest
                 .processUpdateHotelRequest(updateHotelRequest);
-        assertEquals(updateHotelResponse.getHotel(), HotelMapper.mapHotel(hotelModelUpdated));
+        assertEquals(updateHotelResponse.getHotel(),
+                HotelMapper.INSTANCE.hotelModelToHotel(hotelModelUpdated));
     }
 
     @Test
@@ -149,7 +154,8 @@ public class HotelEndpointsTest {
         when(hotelService.deleteHotel(1)).thenReturn(hotelModelDeleted);
         DeleteHotelResponse updateHotelResponse = underTest
                 .processDeleteHotelRequest(deleteHotelRequest);
-        assertEquals(updateHotelResponse.getHotel(), HotelMapper.mapHotel(hotelModelDeleted));
+        assertEquals(updateHotelResponse.getHotel(),
+                HotelMapper.INSTANCE.hotelModelToHotel(hotelModelDeleted));
     }
 
     @Test
@@ -165,7 +171,8 @@ public class HotelEndpointsTest {
         when(hotelService.addAmenityToHotel(1, 1)).thenReturn(hotelModelUpdated);
         AddAmenityHotelResponse addAmenityHotelResponse = underTest
                 .processAddAmenityToHotelRequest(addAmenityHotelRequest);
-        assertEquals(addAmenityHotelResponse.getHotel(), HotelMapper.mapHotel(hotelModelUpdated));
+        assertEquals(addAmenityHotelResponse.getHotel(),
+                HotelMapper.INSTANCE.hotelModelToHotel(hotelModelUpdated));
     }
 
     @Test
@@ -181,7 +188,8 @@ public class HotelEndpointsTest {
         when(hotelService.removeAmenityFromHotel(1, 1)).thenReturn(hotelModelUpdated);
         RemoveAmenityHotelResponse removeAmenityHotelResponse = underTest
                 .processRemoveAmenityFromHotelRequest(removeAmenityHotelRequest);
-        assertEquals(removeAmenityHotelResponse.getHotel(), HotelMapper.mapHotel(hotelModelUpdated));
+        assertEquals(removeAmenityHotelResponse.getHotel(),
+                HotelMapper.INSTANCE.hotelModelToHotel(hotelModelUpdated));
     }
 
     @Test
@@ -194,30 +202,22 @@ public class HotelEndpointsTest {
         amenities.add(new AmenityModel(4, "fax"));
         amenities.add(new AmenityModel(5, "business room"));
         List<Amenity> amenitiesExpected = new ArrayList<>();
-        Amenity a1 = new Amenity();
-        a1.setId(1);
-        a1.setName("pool");
-        Amenity a2 = new Amenity();
-        a2.setId(2);
-        a2.setName("internet");
-        Amenity a3 = new Amenity();
-        a3.setId(3);
-        a3.setName("wifi");
-        Amenity a4 = new Amenity();
-        a4.setId(4);
-        a4.setName("fax");
-        Amenity a5 = new Amenity();
-        a5.setId(5);
-        a5.setName("business room");
-        amenitiesExpected.add(a1);
-        amenitiesExpected.add(a2);
-        amenitiesExpected.add(a3);
-        amenitiesExpected.add(a4);
-        amenitiesExpected.add(a5);
+        amenitiesExpected.add(buildAmenity(1, "pool"));
+        amenitiesExpected.add(buildAmenity(2, "internet"));
+        amenitiesExpected.add(buildAmenity(3, "wifi"));
+        amenitiesExpected.add(buildAmenity(4, "fax"));
+        amenitiesExpected.add(buildAmenity(5, "business room"));
         when(amenityService.getAll()).thenReturn(amenities);
         GetAllAmenitiesResponse getAllAmenitiesResponse = underTest
                 .processGetAllAmenitiesRequest(getAllAmenitiesRequest);
-        assertEquals(getAllAmenitiesResponse.getAmenities(), amenitiesExpected);
+        assertEquals(amenitiesExpected, getAllAmenitiesResponse.getAmenities());
+    }
+
+    private Amenity buildAmenity(int id, String name) {
+        Amenity amenity = new Amenity();
+        amenity.setId(id);
+        amenity.setName(name);
+        return amenity;
     }
 
 }

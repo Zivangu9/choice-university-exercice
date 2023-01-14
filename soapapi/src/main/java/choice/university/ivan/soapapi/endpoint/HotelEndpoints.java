@@ -1,6 +1,5 @@
 package choice.university.ivan.soapapi.endpoint;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,7 +10,6 @@ import org.springframework.ws.server.endpoint.annotation.ResponsePayload;
 
 import choice.university.ivan.schemas.AddAmenityHotelRequest;
 import choice.university.ivan.schemas.AddAmenityHotelResponse;
-import choice.university.ivan.schemas.Amenity;
 import choice.university.ivan.schemas.CreateHotelRequest;
 import choice.university.ivan.schemas.CreateHotelResponse;
 import choice.university.ivan.schemas.DeleteHotelRequest;
@@ -30,6 +28,7 @@ import choice.university.ivan.schemas.RemoveAmenityHotelRequest;
 import choice.university.ivan.schemas.RemoveAmenityHotelResponse;
 import choice.university.ivan.schemas.UpdateHotelRequest;
 import choice.university.ivan.schemas.UpdateHotelResponse;
+import choice.university.ivan.soapapi.mapper.AmenityMapper;
 import choice.university.ivan.soapapi.mapper.HotelMapper;
 import choice.university.ivan.soapapi.model.AmenityModel;
 import choice.university.ivan.soapapi.model.HotelModel;
@@ -48,7 +47,7 @@ public class HotelEndpoints {
     @ResponsePayload
     public GetHotelByIdResponse getHotelById(@RequestPayload GetHotelByIdRequest request) {
         GetHotelByIdResponse response = new GetHotelByIdResponse();
-        Hotel hotel = HotelMapper.mapHotel(hotelService.getById(request.getId()));
+        Hotel hotel = HotelMapper.INSTANCE.hotelModelToHotel(hotelService.getById(request.getId()));
         response.setHotel(hotel);
         return response;
     }
@@ -63,7 +62,8 @@ public class HotelEndpoints {
         pageResponse.setSize(pageFiltered.getSize());
         pageResponse.setPage(pageFiltered.getNumber());
         pageResponse.setTotal(pageFiltered.getTotalElements());
-        HotelMapper.mapHotelsList(pageFiltered.getContent(), pageResponse.getItems());
+
+        HotelMapper.INSTANCE.updateListHotels(pageResponse.getItems(), pageFiltered.getContent());
         response.setPage(pageResponse);
         return response;
     }
@@ -78,7 +78,7 @@ public class HotelEndpoints {
         pageResponse.setSize(pageFiltered.getSize());
         pageResponse.setPage(pageFiltered.getNumber());
         pageResponse.setTotal(pageFiltered.getTotalElements());
-        HotelMapper.mapHotelsList(pageFiltered.getContent(), pageResponse.getItems());
+        HotelMapper.INSTANCE.updateListHotels(pageResponse.getItems(), pageFiltered.getContent());
         response.setPage(pageResponse);
         return response;
     }
@@ -89,7 +89,7 @@ public class HotelEndpoints {
         CreateHotelResponse response = new CreateHotelResponse();
         HotelModel hotel = new HotelModel(null, request.getName(), request.getAddress(), request.getRating());
         HotelModel hotelCreated = hotelService.createHotel(hotel);
-        response.setHotel(HotelMapper.mapHotel(hotelCreated));
+        response.setHotel(HotelMapper.INSTANCE.hotelModelToHotel(hotelCreated));
         return response;
     }
 
@@ -100,7 +100,7 @@ public class HotelEndpoints {
         HotelModel hotel = new HotelModel(request.getId(), request.getName(), request.getAddress(),
                 request.getRating());
         HotelModel hotelUpdated = hotelService.updateHotel(hotel);
-        response.setHotel(HotelMapper.mapHotel(hotelUpdated));
+        response.setHotel(HotelMapper.INSTANCE.hotelModelToHotel(hotelUpdated));
         return response;
     }
 
@@ -109,7 +109,7 @@ public class HotelEndpoints {
     public DeleteHotelResponse processDeleteHotelRequest(@RequestPayload DeleteHotelRequest request) {
         DeleteHotelResponse response = new DeleteHotelResponse();
         HotelModel hotelDeleted = hotelService.deleteHotel(request.getId());
-        response.setHotel(HotelMapper.mapHotel(hotelDeleted));
+        response.setHotel(HotelMapper.INSTANCE.hotelModelToHotel(hotelDeleted));
         return response;
     }
 
@@ -118,7 +118,7 @@ public class HotelEndpoints {
     public AddAmenityHotelResponse processAddAmenityToHotelRequest(@RequestPayload AddAmenityHotelRequest request) {
         AddAmenityHotelResponse response = new AddAmenityHotelResponse();
         HotelModel hotelUpdated = hotelService.addAmenityToHotel(request.getIdHotel(), request.getIdAmenity());
-        response.setHotel(HotelMapper.mapHotel(hotelUpdated));
+        response.setHotel(HotelMapper.INSTANCE.hotelModelToHotel(hotelUpdated));
         return response;
     }
 
@@ -128,7 +128,7 @@ public class HotelEndpoints {
             @RequestPayload RemoveAmenityHotelRequest request) {
         RemoveAmenityHotelResponse response = new RemoveAmenityHotelResponse();
         HotelModel hotelUpdated = hotelService.removeAmenityFromHotel(request.getIdHotel(), request.getIdAmenity());
-        response.setHotel(HotelMapper.mapHotel(hotelUpdated));
+        response.setHotel(HotelMapper.INSTANCE.hotelModelToHotel(hotelUpdated));
         return response;
     }
 
@@ -138,9 +138,7 @@ public class HotelEndpoints {
             @RequestPayload GetAllAmenitiesRequest request) {
         GetAllAmenitiesResponse response = new GetAllAmenitiesResponse();
         List<AmenityModel> amenities = amenityService.getAll();
-        List<Amenity> amenitiesResponse = new ArrayList<>();
-        HotelMapper.mapAmenitiesAndAddToList(amenities, amenitiesResponse);
-        amenitiesResponse.stream().forEach(a -> response.getAmenities().add(a));
+        AmenityMapper.INSTANCE.updateListAmenities(response.getAmenities(), amenities);
         return response;
     }
 
